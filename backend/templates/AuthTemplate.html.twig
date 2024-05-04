@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>
+        {% block Title %}
+            default title
+        {% endblock %}
+    </title>
+    <link rel="stylesheet" href="{{ asset('node_modules/bootstrap/dist/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/authentication.css') }}">
+</head>
+<body>
+<div class="authentication-page">
+    <div class="login-page">
+        <div class="login-content">
+            <div class="form-column">
+                <div class="login-popup">
+                    <button class="welcome-page">
+                    </button>
+                    <div class="form-section">
+                        {% block Form %}
+                            default form
+                        {% endblock %}
+                    </div>
+                </div>
+
+            </div>
+            <div class="about-column">
+                <div class="about-section">
+                    <h2>About Us</h2>
+                    <div class="separator"></div>
+                    <p>
+                        INSAT Social Club is a platform that allows you to connect with your friends and family,
+                        share your thoughts, ideas, and memories with others.
+                        You can also chat with your friends in real-time and stay connected with them no matter where you are.
+                    </p>
+
+                    <div class="logo-container">
+                        <img src="{{ asset('img/logo.gif') }}" alt="About Us" class="about-logo" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

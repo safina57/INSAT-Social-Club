@@ -1,0 +1,71 @@
+/* Styling for the user profile */
+.account-settings .user-profile {
+    margin: 0;
+    padding-bottom: 1rem;
+    text-align: center;
+}
+
+/* Styling for the user avatar */
+.account-settings .user-profile .user-avatar {
+    margin-bottom: 1rem;
+}
+
+.account-settings .user-profile .user-avatar img {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%; /* Circular avatar */
+    border: 5px solid #fff; /* White border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Shadow effect */
+}
+
+/* Styling for the username */
+.account-settings .user-profile h5.username {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    color: #333; /* Dark text color */
+}
+
+/* Styling for the user email */
+.account-settings .user-profile h6.user-email {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #666; /* Light text color */
+}
+
+/* Styling for the about section */
+.account-settings .about {
+    margin: 2rem 0 0 0;
+    text-align: center;
+}
+
+.account-settings .about h5 {
+    margin: 0 0 15px 0;
+    color: #007ae1; /* Blue color */
+}
+
+.account-settings .about p {
+    font-size: 1rem;
+    color: #555; /* Text color */
+}
+
+/* Styling for the upload button */
+.btn-outline-danger {
+    margin-top: 1rem; /* Spacing from the avatar */
+}
+
+/* Styling for the file input */
+input[type="file"] {
+    display: none; /* Hide the file input */
+}
+
+/* Styling for the card */
+.card {
+    background: #f9f9f9; /* Light background */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Shadow effect */    transition: box-shadow 0.3s ease; /* Smooth transition */
+
+}
+
+.card:hover {
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+}
