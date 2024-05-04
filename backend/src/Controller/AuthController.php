@@ -18,9 +18,8 @@ class AuthController extends AbstractController
     #[Route('/login1', name: 'login1', methods: ['POST'],)]
     public function login1(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-        $email = $data['email'];
-        $email = $email."frefef";
+        $email = $request->request->get('email');
+        $email = $email."test";
         return $this->json($email);
     }
 
