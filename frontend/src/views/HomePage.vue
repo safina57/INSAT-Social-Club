@@ -18,10 +18,8 @@
     </div>
   </div>
 </template>
+<script></script>
 
-<script>
-
-</script>
 <!--<script>-->
 <!--  import PostSection from '@/components/HomePage/PostSection.vue';-->
 <!--  import navBar from '@/components/navbar.vue';-->
@@ -48,11 +46,11 @@
 <!--                        user: {-->
 <!--                            id:post.userID,-->
 <!--                            name: post.userName,-->
-<!--                            img: post.img ? require('../back/avatars/' + post.img) : require('../../public/img/noProfileImage.jpg'),-->
+<!--                            img: post.img ,//? require('../back/avatars/' + post.img) : require('../../public/img/noProfileImage.jpg'),-->
 <!--                            alt: 'User Image'-->
 <!--                        },-->
 <!--                        content: post.Caption,-->
-<!--                        img: post.Media ?require('../back/uploads/' + post.Media) : "",-->
+<!--                        img: post.Media ,//?require('../back/uploads/' + post.Media) : "",-->
 <!--                        alt: 'Post Image',-->
 <!--                        commentsShown: false,-->
 <!--                        newCommentContent: '',-->
@@ -60,17 +58,17 @@
 <!--                        Post_ID : post.Post_ID,-->
 <!--                        React_Count : post.React_Count,-->
 <!--                        date: post.Date_published-->
-<!--                        -->
+
 <!--                    };-->
 <!--                }-->
-<!--              -->
+
 
 <!--            const sessionId = sessionStorage.getItem('sessionId');-->
 <!--            let data =new FormData();-->
 <!--            if (sessionId !== null) {-->
 <!--                data.append('sessionId', sessionId);-->
 <!--            }-->
-<!--            axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=getAllPosts`,data)-->
+<!--            axios.get(`http://127.0.0.1:8000/homepage/getAllPosts`)-->
 <!--            .then(response => {-->
 <!--                let result = response.data;-->
 <!--                result = result.map(post=>transformPost(post));-->

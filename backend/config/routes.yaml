@@ -11,3 +11,7 @@ api_login:
 api_login1:
     path: /api/login1
     controller: App\Controller\AuthController::login1
+
+homePage_getAllPosts:
+    path: /homepage/getAllPosts
+    controller: App\Controller\HomePageController::getAllPosts
