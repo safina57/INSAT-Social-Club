@@ -1,0 +1,64 @@
+.verifyEmail-page {
+    background-image: url("/public/img/bg.jpg");
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  .verifyEmail-container {
+    width: 500px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff; 
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); 
+  }
+  
+  .verifyEmail-content {
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .verifyEmail-notification {
+    font-size: 18px;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  .verifySubmit-btn {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .verifySubmit-btn button {
+    padding: 10px 20px;
+    background: #008CBA;    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    outline: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .verifySubmit-btn button:hover {
+    background: linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.5),
+      rgba(255, 255, 255, 0.5)
+    ),
+    linear-gradient(180deg, #5271ff -54.32%, #f02aa6 100%);
+  }
+  
+  .verifySubmit-btn button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }  
+  .verifyError-width {
+    width: 100%;
+    position: relative;
+    max-width: 460px;
+    margin: 0 auto;
+  }
