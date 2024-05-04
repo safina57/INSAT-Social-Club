@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\MailerService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +25,7 @@ class AuthController extends AbstractController
     {
         $email = $request->request->get('email');
         $email = $email."test";
+
         return $this->json($email);
     }
 
@@ -39,5 +41,28 @@ class AuthController extends AbstractController
         } else {
             return $this->json(['success' => false, 'message' => 'Username or Email already exists']);
         }
+    }
+    #[Route('/verify', name: 'verify', methods: ['POST'])]
+    public function verify(Request $request, MailerService $mailer): JsonResponse
+    {
+        $email = $request->request->get('Email');
+        $verification = $this->generateVerificationCode();
+        $mailMessage = "Your verification code is: $verification";
+        $sent = $mailer->sendEmail($email, 'Verification Code', $mailMessage);
+        if ($sent) {
+            return $this->json(['success' => true, 'message' => 'Verification code sent to your email', 'code' => $verification]);
+        } else {
+            return $this->json(['success' => false, 'message' => 'Failed to send verification code']);
+        }
+    }
+    private function generateVerificationCode(): string
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $verificationCode = '';
+        $length = strlen($characters);
+        for ($i = 0; $i < 6; $i++) {
+            $verificationCode .= $characters[rand(0, $length - 1)];
+        }
+        return $verificationCode;
     }
 }

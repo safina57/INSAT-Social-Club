@@ -15,3 +15,7 @@ api_login1:
 api_signup:
     path: /api/signup
     controller: App\Controller\AuthController::signup
+
+api_verify:
+    path: /api/verify
+    controller: App\Controller\AuthController::verify
