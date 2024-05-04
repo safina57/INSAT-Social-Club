@@ -19,3 +19,7 @@ api_signup:
 api_verify:
     path: /api/verify
     controller: App\Controller\AuthController::verify
+
+api_verificationProcess:
+    path: /api/verificationProcess
+    controller: App\Controller\AuthController::verificationProcess

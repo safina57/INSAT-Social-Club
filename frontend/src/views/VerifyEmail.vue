@@ -79,7 +79,7 @@ export default {
       let Signup = this.getSignupFormData();
       Signup.append('code', this.code);
       Signup.append('verificationCode', this.verificationCode);
-      axios.post('http://localhost/php/Social-Media-Clone/src/back/api.php?action=verificationProcess', Signup)
+      axios.post('http://127.0.0.1:8000/api/verificationProcess', Signup)
         .then(response => {
           // Handle successful login response
           this.$store.dispatch('setEmailVerified', true);

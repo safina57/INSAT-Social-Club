@@ -2,32 +2,39 @@
 
 namespace App\Service;
 
-
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class MailerService
 {
-    public function __construct(private MailerInterface $mailer)
+    public function sendEmail(string $email, string $subject, string $body): bool
     {
-    }
-    public function sendEmail(
-        string $to,
-        string $subject,
-        string $htmlContent
-    ): bool {
-        try {
-            $email = (new Email())
-                ->from('youssef.fazloun@gmail.com')
-                ->to($to)
-                ->subject($subject)
-                ->html($htmlContent);
+        $mail = new PHPMailer(true);
 
-            $this->mailer->send($email);
+        try {
+            // Server settings
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'youssef.fazloun@gmail.com';
+            $mail->Password = 'cxdh ezry jeap ggxn';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Recipients
+            $mail->setFrom('youssef.fazloun@gmail.com', 'INSAT Social Club');
+            $mail->addAddress($email);
+
+            // Content
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body = $body;
+
+            $mail->send();
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            // Log or handle the exception as needed
             return false;
         }
     }
-
 }
