@@ -5,6 +5,7 @@
   <div>
     {{ email }}
   </div>
+  <button @click="changeEmail">Send Email</button>
 </template>
 
 <script>
@@ -19,11 +20,21 @@ export default {
     fetchEmail() {
       axios.get('http://127.0.0.1:8000/api/login')
         .then(response => {
-          this.email = response.data.email
+          this.email = response.data
         })
         .catch(error => {
           console.log(error)
         })
+    },
+    changeEmail(){
+      axios.post('http://127.0.0.1:8000/api/login1', { email: this.email })
+          .then(response => {
+            console.log(response.data)
+          })
+          .catch(error => {
+                console.log(error)
+              }
+          )
     }
   },
   mounted() {

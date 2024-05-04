@@ -7,3 +7,7 @@ controllers:
 api_login:
     path: /api/login
     controller: App\Controller\AuthController::login
+
+api_login1:
+    path: /api/login1
+    controller: App\Controller\AuthController::login1
