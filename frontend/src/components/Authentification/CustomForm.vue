@@ -50,7 +50,7 @@ export default {
         return password === repeatPassword;
       }
       return true;
-    }, 
+    },
     checkInputs() {
       for (let i = 0; i < this.inputs.length; i++) {
         if (!this.inputs[i].value) {
@@ -118,27 +118,25 @@ export default {
       }
       axios.defaults.withCredentials = true;
 
-      axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=${action}`, Signup)
+      axios.post(`http://127.0.0.1:8000/api/${action}`, Signup)
           .then(response => {
             if (response.data.message === 'Failed to log in user' && action === 'login') {
-                this.errorMessage = response.data.message;
-                this.error = true;
-              }
+              this.errorMessage = response.data.message;
+              this.error = true;
+            }
             if (action === 'login' && response.data.success) {
-              
+
               sessionStorage.setItem('sessionId', response.data.sessionID);
               sessionStorage.setItem('userId', response.data.userId);
-              if(response.data.isAdmin){
+              if (response.data.isAdmin) {
                 this.$router.push('/admin');
-              }
-              else {
+              } else {
                 this.$router.push('/Home');
               }
             }
             if (this.isSignup && response.data.success) {
               this.$router.push('/login/verifyEmail');
-            }
-            else if (this.isSignup && !response.data.success) {
+            } else if (this.isSignup && !response.data.success) {
               this.errorMessage = response.data.message;
               this.error = true;
             }
@@ -166,19 +164,19 @@ export default {
 
     if (this.isSignup) {
       this.inputs = [
-        { label: 'Full Name', value: '', type: 'text' },
-        { label: 'Username', value: '', type: 'text' },
-        { label: 'Birth Date', value: '', type: 'date' },
-        { label: 'Email', value: '', type: 'email' },
-        { label: 'Password', value: '', type: 'password' },
-        { label: 'Repeat Password', value: '', type: 'password' }
+        {label: 'Full Name', value: '', type: 'text'},
+        {label: 'Username', value: '', type: 'text'},
+        {label: 'Birth Date', value: '', type: 'date'},
+        {label: 'Email', value: '', type: 'email'},
+        {label: 'Password', value: '', type: 'password'},
+        {label: 'Repeat Password', value: '', type: 'password'}
       ];
       this.formTitle = 'Sign Up';
       this.submitButtonText = 'Sign Up';
     } else {
       this.inputs = [
-        { label: 'Username', value: '', type: 'text' },
-        { label: 'Password', value: '', type: 'password' }
+        {label: 'Username', value: '', type: 'text'},
+        {label: 'Password', value: '', type: 'password'}
       ];
       this.formTitle = 'Sign In';
       this.submitButtonText = 'Sign In';
