@@ -27,64 +27,68 @@
     </section>
 </template>
 
-
-
-
 <script>
-import navBar from '../components/navbar.vue';
-import axios from 'axios';
 export default {
-  name: "ContactForm",
-  data: () => ({
-    name: '',
-    email: '',
-    message: '',
-    successMessage: '',
-    notifMessage: '',
-    isLogged: false
-  }),
-  created() {
-    if (sessionStorage.getItem('sessionId')) {
-      this.isLogged = true;
-    }
-  },
-  methods: {
-    clearMessage() {
-      this.successMessage = '';
-      this.notifMessage = '';
-    },
-    handleSubmit() {
-      if (!this.name || !this.email || !this.message) {
-        this.notifMessage = 'Please fill all the fields';
-        return;
-      }
-      let data =new FormData();
-      data.append('name', this.name);
-      data.append('email', this.email);
-      data.append('message', this.message);
-      axios.post('http://localhost/php/Social-Media-Clone/src/back/contactUsApi.php?action=contactUs', data)
-          .then(response => {
-            console.log(response.data.message);
-            if (response.data.success) {
-              this.successMessage = "Report sent successfully";
-              this.name = '';
-              this.email = '';
-              this.message = '';
-            }
-
-          })
-          .catch(error => {
-            console.log(error);
-          })
-
-    },
-  },
-  components: {
-    navBar
-  }
-
-};
+  name: "ContactForm"
+}
 </script>
+
+
+<!--<script>-->
+<!--import navBar from '../components/navbar.vue';-->
+<!--import axios from 'axios';-->
+<!--export default {-->
+<!--  name: "ContactForm",-->
+<!--  data: () => ({-->
+<!--    name: '',-->
+<!--    email: '',-->
+<!--    message: '',-->
+<!--    successMessage: '',-->
+<!--    notifMessage: '',-->
+<!--    isLogged: false-->
+<!--  }),-->
+<!--  created() {-->
+<!--    if (sessionStorage.getItem('sessionId')) {-->
+<!--      this.isLogged = true;-->
+<!--    }-->
+<!--  },-->
+<!--  methods: {-->
+<!--    clearMessage() {-->
+<!--      this.successMessage = '';-->
+<!--      this.notifMessage = '';-->
+<!--    },-->
+<!--    handleSubmit() {-->
+<!--      if (!this.name || !this.email || !this.message) {-->
+<!--        this.notifMessage = 'Please fill all the fields';-->
+<!--        return;-->
+<!--      }-->
+<!--      let data =new FormData();-->
+<!--      data.append('name', this.name);-->
+<!--      data.append('email', this.email);-->
+<!--      data.append('message', this.message);-->
+<!--      axios.post('http://localhost/php/Social-Media-Clone/src/back/contactUsApi.php?action=contactUs', data)-->
+<!--          .then(response => {-->
+<!--            console.log(response.data.message);-->
+<!--            if (response.data.success) {-->
+<!--              this.successMessage = "Report sent successfully";-->
+<!--              this.name = '';-->
+<!--              this.email = '';-->
+<!--              this.message = '';-->
+<!--            }-->
+
+<!--          })-->
+<!--          .catch(error => {-->
+<!--            console.log(error);-->
+<!--          })-->
+
+<!--    },-->
+<!--  },-->
+<!--  components: {-->
+<!--    navBar-->
+<!--  }-->
+
+<!--};-->
+<!--</script>-->
 
 <style>
 

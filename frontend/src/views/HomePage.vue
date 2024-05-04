@@ -20,85 +20,88 @@
 </template>
 
 <script>
-  import PostSection from '@/components/HomePage/PostSection.vue';
-  import navBar from '@/components/navbar.vue';
-  import Inbox from '@/components/MessageBox/Inbox.vue';
-  import ProfileCard from '@/components/EditProfile/ProfileCard.vue';
-  import axios from 'axios';
-  export default {
-    components: {
-      PostSection,
-      navBar,
-      Inbox,
-      ProfileCard
-    },
-    data(){
-      return {
-        Posts : [],
-        visiblePostCount: 8
-      }
-    },
-    methods:{
-      fetchPosts(){
-        function transformPost(post) {
-                    return {
-                        user: {
-                            id:post.userID,
-                            name: post.userName,
-                            img: post.img ? require('../back/avatars/' + post.img) : require('../../public/img/noProfileImage.jpg'),
-                            alt: 'User Image'
-                        },
-                        content: post.Caption,
-                        img: post.Media ?require('../back/uploads/' + post.Media) : "",
-                        alt: 'Post Image',
-                        commentsShown: false,
-                        newCommentContent: '',
-                        isLiked:post.isLiked,
-                        Post_ID : post.Post_ID,
-                        React_Count : post.React_Count,
-                        date: post.Date_published
-                        
-                    };
-                }
-              
-
-            const sessionId = sessionStorage.getItem('sessionId');
-            let data =new FormData();
-            if (sessionId !== null) {
-                data.append('sessionId', sessionId);
-            }
-            axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=getAllPosts`,data)
-            .then(response => {
-                let result = response.data;
-                result = result.map(post=>transformPost(post));
-                this.Posts = result;
-
-            })
-            .catch(error => {
-                console.error('Error fetching posts:', error);
-      });
-      },visiblePosts() {
-        return this.Posts.slice(0, this.visiblePostCount);
-      },
-      hasMorePosts() {
-        return this.visiblePostCount < this.Posts.length;
-      },
-      loadMorePosts() {
-        this.visiblePostCount += 5;
-      },
-      handlePostAdded() {
-        this.fetchPosts();
-      },
-      handlePostDeleted(){
-            this.fetchPosts();
-      }
-  },
-  created() {
-    this.fetchPosts();
-  }
-}
 
 </script>
+<!--<script>-->
+<!--  import PostSection from '@/components/HomePage/PostSection.vue';-->
+<!--  import navBar from '@/components/navbar.vue';-->
+<!--  import Inbox from '@/components/MessageBox/Inbox.vue';-->
+<!--  import ProfileCard from '@/components/EditProfile/ProfileCard.vue';-->
+<!--  import axios from 'axios';-->
+<!--  export default {-->
+<!--    components: {-->
+<!--      PostSection,-->
+<!--      navBar,-->
+<!--      Inbox,-->
+<!--      ProfileCard-->
+<!--    },-->
+<!--    data(){-->
+<!--      return {-->
+<!--        Posts : [],-->
+<!--        visiblePostCount: 8-->
+<!--      }-->
+<!--    },-->
+<!--    methods:{-->
+<!--      fetchPosts(){-->
+<!--        function transformPost(post) {-->
+<!--                    return {-->
+<!--                        user: {-->
+<!--                            id:post.userID,-->
+<!--                            name: post.userName,-->
+<!--                            img: post.img ? require('../back/avatars/' + post.img) : require('../../public/img/noProfileImage.jpg'),-->
+<!--                            alt: 'User Image'-->
+<!--                        },-->
+<!--                        content: post.Caption,-->
+<!--                        img: post.Media ?require('../back/uploads/' + post.Media) : "",-->
+<!--                        alt: 'Post Image',-->
+<!--                        commentsShown: false,-->
+<!--                        newCommentContent: '',-->
+<!--                        isLiked:post.isLiked,-->
+<!--                        Post_ID : post.Post_ID,-->
+<!--                        React_Count : post.React_Count,-->
+<!--                        date: post.Date_published-->
+<!--                        -->
+<!--                    };-->
+<!--                }-->
+<!--              -->
+
+<!--            const sessionId = sessionStorage.getItem('sessionId');-->
+<!--            let data =new FormData();-->
+<!--            if (sessionId !== null) {-->
+<!--                data.append('sessionId', sessionId);-->
+<!--            }-->
+<!--            axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=getAllPosts`,data)-->
+<!--            .then(response => {-->
+<!--                let result = response.data;-->
+<!--                result = result.map(post=>transformPost(post));-->
+<!--                this.Posts = result;-->
+
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error fetching posts:', error);-->
+<!--      });-->
+<!--      },visiblePosts() {-->
+<!--        return this.Posts.slice(0, this.visiblePostCount);-->
+<!--      },-->
+<!--      hasMorePosts() {-->
+<!--        return this.visiblePostCount < this.Posts.length;-->
+<!--      },-->
+<!--      loadMorePosts() {-->
+<!--        this.visiblePostCount += 5;-->
+<!--      },-->
+<!--      handlePostAdded() {-->
+<!--        this.fetchPosts();-->
+<!--      },-->
+<!--      handlePostDeleted(){-->
+<!--            this.fetchPosts();-->
+<!--      }-->
+<!--  },-->
+<!--  created() {-->
+<!--    this.fetchPosts();-->
+<!--  }-->
+<!--}-->
+
+<!--</script>-->
 
 <style>
 

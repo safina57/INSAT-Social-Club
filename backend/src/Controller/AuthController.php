@@ -3,19 +3,17 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-#[Route('/auth')]
+#[Route('/api')]
 class AuthController extends AbstractController
 {
     #[Route('/login', name: 'login')]
-    public function login(): Response
+    public function login(): JsonResponse
     {
-        return $this->render('auth/login.html.twig');
+        $email = "frefefe";
+        return $this->json($email);
     }
-    #[Route('/signup', name: 'signup')]
-    public function signup(): Response
-    {
-        return $this->render('auth/signup.html.twig');
-    }
+
+
 }

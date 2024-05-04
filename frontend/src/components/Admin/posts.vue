@@ -61,102 +61,108 @@
 </template>
 
 <script>
-import axios from 'axios';
-    export default {
-        data() {
-            return {
-                Posts: [],
-                displayedPostsCount: 8,
-                mediaShown: "",
-                commentsShown: NaN,
-                viewMedia: false
-            }
-        },
-        computed: {
-            displayedPosts() {
-                return this.Posts.slice(0, this.displayedPostsCount);
-            },
-            showMoreButton() {
-                return this.displayedPostsCount < this.Posts.length;
-            }
-        },
-        methods: {
-            deletePost(Post_ID) {
-                let data = new FormData();
-                data.append('Post_ID',Post_ID);
-                axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=deletePost`, data)
-                    .then(response => {
-                        console.log(response.data.message);
-                        if(response.data.success) {
-                          this.fetchPosts();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error Deleting Post:', error);
-                    });
-            },
-            showContent(index) {
-                alert(this.Posts[index].Content);
-            },
-            showMedia(media) {
-                this.viewMedia = true;
-                if (media){
-                    this.mediaShown = require(`../../back/uploads/${media}`);
-                }
-                else
-                {
-                    this.mediaShown = "";
-                }
-            },
-            showComments(index) {
-                if (this.commentsShown!=index)
-                {
-                    this.commentsShown=index;
-                }
-                else
-                {
-                    this.commentsShown=NaN;
-                }
-            },
-            loadMorePosts() {
-                this.displayedPostsCount += 5;
-            },
-            fetchPosts(){
-                function transformPost(post) {
 
-                    return {
-                        Username: post.userName,
-                        Content: post.Caption,
-                        Media: post.Media,
-                        Comments: post.Comments,
-                        Post_ID : post.Post_ID
-                    };
-                }
-
-                axios.get(`http://localhost/php/Social-Media-Clone/src/back/AdminApi.php?action=getAllPosts`)
-            .then(response => {
-                
-                let result = response.data;
-                result = result.map(post=>transformPost(post));
-                this.Posts = result;
-                
-            })
-            .catch(error => {
-                console.error('Error fetching posts:', error);
-      });
-            }
-        },
-        name: 'postSection',
-        mounted(){
-            this.fetchPosts();
-        }
-    }
 </script>
+
+<!--<script>-->
+<!--import axios from 'axios';-->
+<!--    export default {-->
+<!--        data() {-->
+<!--            return {-->
+<!--                Posts: [],-->
+<!--                displayedPostsCount: 8,-->
+<!--                mediaShown: "",-->
+<!--                commentsShown: NaN,-->
+<!--                viewMedia: false-->
+<!--            }-->
+<!--        },-->
+<!--        computed: {-->
+<!--            displayedPosts() {-->
+<!--                return this.Posts.slice(0, this.displayedPostsCount);-->
+<!--            },-->
+<!--            showMoreButton() {-->
+<!--                return this.displayedPostsCount < this.Posts.length;-->
+<!--            }-->
+<!--        },-->
+<!--        methods: {-->
+<!--            deletePost(Post_ID) {-->
+<!--                let data = new FormData();-->
+<!--                data.append('Post_ID',Post_ID);-->
+<!--                axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=deletePost`, data)-->
+<!--                    .then(response => {-->
+<!--                        console.log(response.data.message);-->
+<!--                        if(response.data.success) {-->
+<!--                          this.fetchPosts();-->
+<!--                        }-->
+<!--                    })-->
+<!--                    .catch(error => {-->
+<!--                        console.error('Error Deleting Post:', error);-->
+<!--                    });-->
+<!--            },-->
+<!--            showContent(index) {-->
+<!--                alert(this.Posts[index].Content);-->
+<!--            },-->
+<!--            showMedia(media) {-->
+<!--                this.viewMedia = true;-->
+<!--                if (media){-->
+<!--                    this.mediaShown = require(`../../back/uploads/${media}`);-->
+<!--                }-->
+<!--                else-->
+<!--                {-->
+<!--                    this.mediaShown = "";-->
+<!--                }-->
+<!--            },-->
+<!--            showComments(index) {-->
+<!--                if (this.commentsShown!=index)-->
+<!--                {-->
+<!--                    this.commentsShown=index;-->
+<!--                }-->
+<!--                else-->
+<!--                {-->
+<!--                    this.commentsShown=NaN;-->
+<!--                }-->
+<!--            },-->
+<!--            loadMorePosts() {-->
+<!--                this.displayedPostsCount += 5;-->
+<!--            },-->
+<!--            fetchPosts(){-->
+<!--                function transformPost(post) {-->
+
+<!--                    return {-->
+<!--                        Username: post.userName,-->
+<!--                        Content: post.Caption,-->
+<!--                        Media: post.Media,-->
+<!--                        Comments: post.Comments,-->
+<!--                        Post_ID : post.Post_ID-->
+<!--                    };-->
+<!--                }-->
+
+<!--                axios.get(`http://localhost/php/Social-Media-Clone/src/back/AdminApi.php?action=getAllPosts`)-->
+<!--            .then(response => {-->
+<!--                -->
+<!--                let result = response.data;-->
+<!--                result = result.map(post=>transformPost(post));-->
+<!--                this.Posts = result;-->
+<!--                -->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error fetching posts:', error);-->
+<!--      });-->
+<!--            }-->
+<!--        },-->
+<!--        name: 'postSection',-->
+<!--        mounted(){-->
+<!--            this.fetchPosts();-->
+<!--        }-->
+<!--    }-->
+<!--</script>-->
+
+
 <style>
     .table {
         width: 90%;
         margin: 20px auto;
-        margin-top:10px auto ;
+        margin-top:10px;
     }
     .table-container {
         margin-right: 40px;
