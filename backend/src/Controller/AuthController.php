@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Service\MailerService;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -122,6 +124,9 @@ class AuthController extends AbstractController
         }
     }
 
+    /**
+     * @throws Exception
+     */
     #[Route('/verificationProcess', name: 'verificationProcess', methods: ['POST'])]
     public function verificationProcess(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
@@ -134,7 +139,10 @@ class AuthController extends AbstractController
         $username = $request->request->get('Username');
 
         $password = $request->request->get('Password');
+        $password = password_hash($password, PASSWORD_DEFAULT);
 
+        $birthDateString = $request->request->get('BirthDate');
+        $birthDate = new DateTime($birthDateString);
 
         $result = $code === $verification;
         if ($result) {
@@ -144,6 +152,7 @@ class AuthController extends AbstractController
             $user->setEmail($email);
             $user->setUsername($username);
             $user->setPassword($password);
+            $user->setBirthDate($birthDate);
             $entityManager->persist($user);
             $entityManager->flush();
             return $this->json(['success' => true, 'message' => 'Signed up successfully']);
