@@ -38,13 +38,22 @@ class HomePageController extends AbstractController
         $post = new Post();
 
         $user = $entityManager->getRepository(User::class)->find($request->get('user_id'));
+        if(!$request->get('Post_ID')){
+            $post->setCaption($request->get('Content'))
+                ->setReactCount(0)
+                ->setUser($user);
+            if(!$request->get('Media')){
+                $post->setMedia($request->get('Media'));
+            }
+        }else{
+            $oldPost = $entityManager->getRepository(Post::class)->find($request->get('Post_ID'));
+            $post->setCaption($oldPost->getCaption())
+                ->setReactCount(0)
+                ->setUser($user)
+                ->setMedia($oldPost->getMedia());
 
-        $post->setCaption($request->get('Content'))
-            ->setReactCount(0)
-            ->setUser($user);
-        if(!$request->get('Media')){
-            $post->setMedia($request->get('Media'));
         }
+
 
 
 
