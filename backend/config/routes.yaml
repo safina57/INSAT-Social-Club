@@ -30,3 +30,10 @@ api_resetPasswordRequest:
 api_resetPassword:
     path: /api/resetPassword
     controller: App\Controller\AuthController::resetPassword
+api_isLoggedIn:
+    path: /api/isLoggedIn
+    controller: App\Controller\AuthController::isLoggedIn
+api_logout:
+    path: /api/logout
+    controller: App\Controller\AuthController::logout
+

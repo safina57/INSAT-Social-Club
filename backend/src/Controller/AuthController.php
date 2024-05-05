@@ -348,4 +348,52 @@ class AuthController extends AbstractController
 ";
         return $mailer->sendEmail($email, $subject, $body);
     }
+    #[Route('/isLoggedIn', name: 'isLoggedIn', methods: ['POST'])]
+    public function isLoggedIn(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        if ($sessionId) {
+            $session->setId($sessionId);
+            $session->start();
+        }
+        else {
+            $session->start();
+            $sessionId=$session->getId();
+        }
+        $result = $session->get('loggedIn');
+        if ($result) {
+            return $this->json(['success' => true, 'message' => 'User is logged in', 'sessionID' => $sessionId, 'userId' => $session->get('userId')]);
+        }
+        //check for remember me
+        $result = $request->cookies->get('rememberMe');
+        if ($result) {
+            $token = $request->cookies->get('rememberMe');
+            $repository = $doctrine->getRepository(User::class);
+            $user = $repository->findOneBy(['rememberMeToken' => $token]);
+            if ($user) {
+                $session->set('userId', $user->getId());
+                $session->set('loggedIn', true);
+                return $this->json(['success' => true, 'message' => 'User is logged in', 'sessionID' => $sessionId, 'userId' => $user->getId()]);
+            }
+        }
+        return $this->json(['success' => false, 'message' => 'User is not logged in']);
+    }
+    #[Route('/logout', name: 'logout', methods: ['POST'])]
+    public function logout(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $session = $request->getSession();
+        $session->invalidate();
+        $token = $request->cookies->get('rememberMe');
+        if ($token) {
+            $repository = $doctrine->getRepository(User::class);
+            $entityManager = $doctrine->getManager();
+            $repository->removeToken($token, $entityManager);
+            $response = new JsonResponse(['success' => true, 'message' => 'Logged out successfully']);
+            $response->headers->clearCookie('rememberMe');
+            return $response;
+        }
+        return $this->json(['success' => true, 'message' => 'Logged out successfully']);
+    }
+
 }

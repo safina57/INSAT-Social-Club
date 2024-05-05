@@ -58,7 +58,7 @@ import searchBar from '@/components/searchBar.vue';
               let data =new FormData();
               data.append('sessionID', sessionID);
               axios.defaults.withCredentials = true;
-              axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=logout`,data)
+              axios.post(`http://127.0.0.1:8000/api/logout`,data)
               .then(response => {
                 console.log(response.data);
                 if(response.data.success) {

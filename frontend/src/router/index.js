@@ -12,7 +12,7 @@ import Admin from '@/views/Admin.vue';
 import WelcomePage from '@/views/WelcomePage.vue';
 import UserAccount from '@/views/UserAccount.vue';
 import Test from '@/views/TestTest.vue';
-//import axios from "axios";
+import axios from "axios";
 
 const routes = [
     {
@@ -35,7 +35,7 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/Admin'
+    redirect: '/Home'
   },
   {
     path: '/login/verifyEmail',
@@ -109,7 +109,6 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 });
-/*
 router.beforeEach((to, from, next) => {
   // Perform the check if the route requires authentication
   if (to.meta.requiresAuth) {
@@ -120,7 +119,7 @@ router.beforeEach((to, from, next) => {
       data.append('sessionId', sessionId);
     }
     axios.defaults.withCredentials = true;
-    axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=isLoggedIn`,data)
+    axios.post(`http://127.0.0.1:8000/api/isLoggedIn`,data)
         .then(response => {
           console.log(response.data.message);
           if (!response.data.success) {
@@ -128,12 +127,14 @@ router.beforeEach((to, from, next) => {
             next('/WelcomePage');
           } else {
             // If the user is logged in, continue with the navigation
-            setUserOnline();
+            //setUserOnline();
             sessionStorage.setItem('sessionId', response.data.sessionID);
             sessionStorage.setItem('userId', response.data.userId);
-            if(to.meta.isAdmin && !response.data.isAdmin){
+            /*if(to.meta.isAdmin && !response.data.isAdmin){
                 next('/Home');
             }
+
+             */
             next();
           }
         })
@@ -149,6 +150,7 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
+/*
 function setUserOnline() {
   try {
       const sessionId = sessionStorage.getItem('sessionId');
