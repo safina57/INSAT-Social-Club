@@ -6,6 +6,7 @@ use App\Entity\Post;
 use App\Entity\User;
 use App\Entity\React;
 use App\Entity\Comment;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -195,11 +196,23 @@ class HomePageController extends AbstractController
 
     }
     #[Route('/getUser', name: 'getUser',methods: ['POST'])]
-    public function getUserInfo(EntityManagerInterface $entityManager,Request $request): JsonResponse
+    public function getUserInfo(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
-        $user = $entityManager->getRepository(User::class)->find($request->get('User_ID'));
+        $repository = $doctrine->getRepository(User::class);
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+        $user = $repository->findOneBy(['id' => $id]);
 
-        return $this->json($user);
+
+        $data['email'] = $user->getEmail();
+        $data['img'] = $user->getImage();
+        $data['username'] = $user->getUsername();
+        $data['bio'] = $user->getBio();
+        $data['fullName'] = $user->getFullName();
+        return $this->json(['success' => true, 'message' => 'Details fetched successfully', 'data' => $data]);
 
     }
 }

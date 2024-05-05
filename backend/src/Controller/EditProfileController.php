@@ -123,6 +123,29 @@ class EditProfileController extends AbstractController
         return $this->json(['success' => true, 'message' => 'Avatar uploaded successfully', 'path' => $avatar->getClientOriginalName()]);
     }
 
+    #[Route('/fetchAvatar', name: 'fetchAvatar', methods: ['POST'])]
+    public function fetchAvatar(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $repository = $doctrine->getRepository(User::class);
+
+        $repository = $doctrine->getRepository(User::class);
+
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+        $user = $repository->findOneBy(['id' => $id]);
+
+        $path = $user->getImage();
+
+        if ($path){
+            return $this->json(['success' => true, 'message' => 'Avatar fetched successfully', 'path' => $path]);
+        }
+        return $this->json(['success' => false, 'message' => 'Failed to fetch avatar']);
+
+    }
+
     private function verifyPassword($user, $id, $oldPassword) : bool
     {
         $hashedPassword = $user->getPassword();

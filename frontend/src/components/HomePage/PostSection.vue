@@ -82,7 +82,7 @@ export default {
     }
   },
   mounted() {
-    //this.fetchAvatar();
+    this.fetchAvatar();
   },
   props: ['Posts'],
   methods: {
@@ -200,22 +200,22 @@ export default {
       }
 
     },
-    // fetchAvatar() {
-    //   let data = new FormData();
-    //   let sessionId = sessionStorage.getItem('sessionId');
-    //   data.append('sessionId', sessionId);
-    //   axios.post('http://localhost/php/Social-Media-Clone/src/back/EditProfileAPI.php?action=fetchAvatar', data)
-    //       .then(response => {
-    //         if (response.data.success) {
-    //           if (response.data.path !== null) {
-    //             this.avatar = require('../../back/avatars/' + response.data.path);
-    //           }
-    //         }
-    //       })
-    //       .catch(error => {
-    //         console.error('Error fetching profile details:', error);
-    //       });
-    // },
+    fetchAvatar() {
+      let data = new FormData();
+      let sessionId = sessionStorage.getItem('sessionId');
+      data.append('sessionId', sessionId);
+      axios.post('http://127.0.0.1:8000/api/fetchAvatar', data)
+          .then(response => {
+            if (response.data.success) {
+              if (response.data.path !== null) {
+                this.avatar = require('../../../../backend/avatars/' + response.data.path);
+              }
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching profile details:', error);
+          });
+    },
     formatMessageTime(time) {
       const messageTime = new Date(time);
       const today = new Date();
