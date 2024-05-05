@@ -488,24 +488,21 @@ body {
 }
 </style>
 
+
 <script>
 
+export default {
+  methods: {
+    SignIn() {
+      this.$router.push('/login');
+    },
+    SignUp() {
+      this.$router.push('/login');
+    },
+    RedirectContactUs() {
+      this.$router.push('/Contact');
+    }
+  }
+}
+
 </script>
-
-<!--<script>-->
-
-<!--export default {-->
-<!--  methods: {-->
-<!--    SignIn() {-->
-<!--      this.$router.push('/login');-->
-<!--    },-->
-<!--    SignUp() {-->
-<!--      this.$router.push('/login');-->
-<!--    },-->
-<!--    RedirectContactUs() {-->
-<!--      this.$router.push('/Contact');-->
-<!--    }-->
-<!--  }-->
-<!--}-->
-
-<!--</script>-->

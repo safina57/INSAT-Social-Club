@@ -44,7 +44,7 @@
               share your thoughts, ideas, and memories with others.
               You can also chat with your friends in real-time and stay connected with them no matter where you are.
             </p>
-            
+
             <div class="logo-container">
               <img src="../../public/img/logo.gif" alt="About Us" class="about-logo" />
             </div>
@@ -55,35 +55,32 @@
   </div>
 </template>
 
+
 <script>
+import CustomForm from '@/components/Authentification/CustomForm.vue';
 
+export default {
+  components: {
+    CustomForm
+  },
+  data() {
+    return {
+      currentForm: 'signin',
+    };
+  },
+  methods: {
+    switchToSignin() {
+      this.currentForm = 'signin';
+    },
+    switchToSignup() {
+      this.currentForm = 'signup';
+    },
+    updateRememberMe(event) {
+      this.$store.dispatch('updateRememberMe', event.target.checked);
+    },
+    returnToWelcomePage() {
+      this.$router.push('/WelcomePage');
+    }
+  }
+};
 </script>
-
-<!--<script>-->
-<!--import CustomForm from '@/components/Authentification/CustomForm.vue';-->
-
-<!--export default {-->
-<!--  components: {-->
-<!--    CustomForm-->
-<!--  },-->
-<!--  data() {-->
-<!--    return {-->
-<!--      currentForm: 'signin',-->
-<!--    };-->
-<!--  },-->
-<!--  methods: {-->
-<!--    switchToSignin() {-->
-<!--      this.currentForm = 'signin';-->
-<!--    },-->
-<!--    switchToSignup() {-->
-<!--      this.currentForm = 'signup';-->
-<!--    },-->
-<!--    updateRememberMe(event) {-->
-<!--      this.$store.dispatch('updateRememberMe', event.target.checked);-->
-<!--    },-->
-<!--    returnToWelcomePage() {-->
-<!--      this.$router.push('/WelcomePage');-->
-<!--    }-->
-<!--}-->
-<!--};-->
-<!--</script>-->
