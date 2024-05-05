@@ -34,3 +34,14 @@ api_logout:
     path: /api/logout
     controller: App\Controller\AuthController::logout
 
+api_UpdatePersonalDetails:
+    path: /api/UpdatePersonalDetails
+    controller: App\Controller\EditProfileController::UpdatePersonalDetails
+
+api_DetailsFetch:
+    path: /api/DetailsFetch
+    controller: App\Controller\EditProfileController::DetailsFetch
+
+api_UploadAvatar:
+    path: /api/UploadAvatar
+    controller: App\Controller\EditProfileController::UploadAvatar
