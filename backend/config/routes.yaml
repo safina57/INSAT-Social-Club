@@ -11,3 +11,24 @@ api_login:
 api_login1:
     path: /api/login1
     controller: App\Controller\AuthController::login1
+
+admin_api_getAllPosts:
+    path: /admin_api/getAll/Post
+    controller: App\Controller\AdminController::getAll
+
+admin_api_getAllUsers:
+    path: /admin_api/getAll/User
+    controller: App\Controller\AdminController::getAll
+
+admin_api_getAllReports:
+    path: /admin_api/getAll/Report
+    controller: App\Controller\AdminController::getAll
+
+admin_api_getValue:
+    path: /admin_api/getValue
+    controller: App\Controller\AdminController::getValue
+
+admin_api_getCommentsByPostId:
+    path: /admin_api/getCommentsByPostId
+    controller: App\Controller\AdminController::getCommentsByPostId
+

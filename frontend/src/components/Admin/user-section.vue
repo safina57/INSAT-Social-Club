@@ -30,75 +30,71 @@
 </template>
 
 <script>
+import axios from 'axios';
 
+export default {
+  data() {
+    return {
+      users: [],
+      displayedUsersCount: 5,
+    }
+  },
+  methods: {
+    deleteUser(userId) {
+      axios.post(`http://127.0.0.1:8000/admin_api/deleteRow/user/${userId}`)
+          .then(response => {
+            if (response.data.success) {
+              this.fetchUsers();
+              alert('User deleted successfully!')
+            } else {
+              alert('Failed to delete user.');
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting user:', error);
+            alert('Error deleting user.');
+          });
+    },
+    loadMoreUsers() {
+      this.displayedUsersCount += 4;
+    },
+    fetchUsers() {
+      axios.get(`http://127.0.0.1:8000/admin_api/getAll/user`)
+          .then(response => {
+            let result = response.data;
+            result = result.map(user => this.transformData(user));
+            if (result.length > 0) {
+              console.log("Data fetched successfully");
+              this.users = result;
+            } else {
+              console.log("No data found");
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching users:', error);
+            alert('Error fetching users.');
+          });
+    },
+    transformData(user) {
+      return {
+        User_ID: user.id,
+        Username: user.username,
+        Email: user.email,
+      };
+    },
+    displayedUsers() {
+      return this.users.slice(0, this.displayedUsersCount);
+    },
+    showMoreButton() {
+      return this.displayedUsersCount < this.users.length;
+    },
+  },
+  mounted() {
+    this.fetchUsers();
+  },
+}
 </script>
 
-<!--<script>-->
-<!--    import axios from 'axios';-->
-<!--    export default {-->
-<!--        data() {-->
-<!--            return {-->
-<!--                users:[],-->
-<!--                displayedUsersCount: 5,-->
-<!--            }-->
-<!--        },-->
-<!--        methods: {-->
-<!--            deleteUser(User_ID) {-->
-<!--                let data = new FormData();-->
-<!--                data.append('User_ID',User_ID);-->
-<!--                axios.post(`http://localhost/php/Social-Media-Clone/src/back/AdminApi.php?action=deleteUser`,data)-->
-<!--            .then(response => {-->
-<!--              console.log(response.data.message);-->
-<!--              if(response.data.success) {-->
-<!--                this.fetchUsers();-->
-<!--              }-->
-
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Error deleting user:', error);-->
-<!--      });-->
-<!--            },-->
-<!--            loadMoreUsers() {-->
-<!--                this.displayedUsersCount += 4;-->
-<!--            },-->
-<!--            displayedUsers() {-->
-<!--                return this.users.slice(0, this.displayedUsersCount);-->
-<!--            },-->
-<!--            showMoreButton() {-->
-<!--                return this.displayedUsersCount < this.users.length;-->
-<!--            },-->
-<!--            fetchUsers(){-->
-<!--                function transformData(user) {-->
-<!--                    return {-->
-<!--                        User_ID : user.userID,-->
-<!--                        Username: user.userName,-->
-<!--                        Email: user.email,-->
-<!--                    };-->
-<!--                }-->
-<!--            axios.get(`http://localhost/php/Social-Media-Clone/src/back/AdminApi.php?action=getAllUsers`)-->
-<!--            .then(response => {-->
-
-<!--                let result = response.data;-->
-<!--                result = result.map(user=>transformData(user));-->
-<!--                if(result.length > 0) {-->
-<!--                  console.log("Data fetched successfully");-->
-<!--                  this.users = result;-->
-<!--                }-->
-<!--                else {-->
-<!--                  console.log("No data found");-->
-<!--                }-->
-<!--                -->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Error fetching posts:', error);-->
-<!--      });-->
-<!--            }-->
-<!--        },-->
-<!--        mounted() {-->
-<!--            this.fetchUsers();-->
-<!--        },-->
-<!--    }-->
-<!--</script>-->
 
 <style scoped>
     .table {

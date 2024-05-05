@@ -14,7 +14,7 @@
                 <tr v-if="Posts.length === 0">
                     <td colspan="5" class="Note">No Posts found</td>
                 </tr>
-                <tr v-for="(post,index) in displayedPosts" :key="post.post_ID">
+                <tr v-for="(post,index) in displayedPosts" :key="post.Post_ID">
                     <td>{{ post.Username }}</td>
                     <td>
                         <button @click="showContent(index)" class="btn btn-outline-secondary">Read Content</button>
@@ -39,14 +39,14 @@
     </div>
     <div class="row">
         <div class="col-sm-6">
-            <div v-if="mediaShown!=NaN && Posts[mediaShown] && Posts[mediaShown].Media">
+            <div v-if="!isNaN(mediaShown) && Posts[mediaShown] && Posts[mediaShown].Media">
                 {{ Posts[mediaShown].Media }}
             </div>
         </div>
         <div class="col-sm-6">
-            <div v-if="commentsShown!=NaN && Posts[commentsShown] && Posts[commentsShown].Comments">
+            <div v-if="!isNaN(commentsShown) && Posts[commentsShown] && Posts[commentsShown].Comments">
                 <div v-for="comment in Posts[commentsShown].Comments" :key="comment.comment_ID">
-                    <p>{{ comment.userName }}</p>
+                    <p>{{ comment.username }}</p>
                     <p>{{ comment.Content }}</p>
                 </div>
             </div>
@@ -60,102 +60,97 @@
     </div>
 </template>
 
+
 <script>
+import axios from 'axios';
+    export default {
+      data() {
+        return {
+          Posts: [],
+          displayedPostsCount: 8,
+          mediaShown: "",
+          commentsShown: NaN,
+          viewMedia: false
+        }
+      },
+      computed: {
+        displayedPosts() {
+          return this.Posts.slice(0, this.displayedPostsCount);
+        },
+        showMoreButton() {
+          return this.displayedPostsCount < this.Posts.length;
+        }
+      },
+      methods: {
+        deletePost(Post_ID) {
+          let data = new FormData();
+          data.append('Post_ID', Post_ID);
+          axios.post(`http://127.0.0.1:8000/admin_api/deleteRow/post/${Post_ID}`)
+              .then(response => {
+                if (response.data.success) {
+                  this.fetchPosts();
+                  alert(`Post ${Post_ID} has been deleted successfully!`);
+                }
+              })
+              .catch(error => {
+                console.error('Error Deleting Post:', error);
+                alert('Error Deleting Post')
+              });
 
+        },
+        showContent(index) {
+          alert(this.Posts[index].Content);
+        },
+        showMedia(media) {
+          this.viewMedia = true;
+          if (media) {
+            this.mediaShown = "media";
+          } else {
+            this.mediaShown = "";
+          }
+        },
+        showComments(index) {
+          if (this.commentsShown !== index) {
+            this.commentsShown = index;
+          } else {
+            this.commentsShown = NaN;
+          }
+        },
+        loadMorePosts() {
+          this.displayedPostsCount += 5;
+        },
+        fetchPosts() {
+          function transformPost(post) {
+                  return {
+                    Username: post.User.username,
+                    Content: post.caption,
+                    Media: post.media,
+                    Comments: post.comments,
+                    Post_ID: post.id
+                  };
+                }
+
+          axios.get(`http://127.0.0.1:8000/admin_api/getAll/Post`)
+              .then(response => {
+                let result = response.data;
+                result = result.map(post => transformPost(post));
+                if (result.length > 0)
+                {
+                  console.log("Data fetched successfully");
+                  this.Posts = result ;
+                }
+              })
+              .catch(error => {
+                console.error('Error fetching posts:', error);
+              })
+        }
+      },
+      mounted() {
+        this.fetchPosts();
+      },
+      name: 'postSection',
+    }
 </script>
-
-<!--<script>-->
-<!--import axios from 'axios';-->
-<!--    export default {-->
-<!--        data() {-->
-<!--            return {-->
-<!--                Posts: [],-->
-<!--                displayedPostsCount: 8,-->
-<!--                mediaShown: "",-->
-<!--                commentsShown: NaN,-->
-<!--                viewMedia: false-->
-<!--            }-->
-<!--        },-->
-<!--        computed: {-->
-<!--            displayedPosts() {-->
-<!--                return this.Posts.slice(0, this.displayedPostsCount);-->
-<!--            },-->
-<!--            showMoreButton() {-->
-<!--                return this.displayedPostsCount < this.Posts.length;-->
-<!--            }-->
-<!--        },-->
-<!--        methods: {-->
-<!--            deletePost(Post_ID) {-->
-<!--                let data = new FormData();-->
-<!--                data.append('Post_ID',Post_ID);-->
-<!--                axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=deletePost`, data)-->
-<!--                    .then(response => {-->
-<!--                        console.log(response.data.message);-->
-<!--                        if(response.data.success) {-->
-<!--                          this.fetchPosts();-->
-<!--                        }-->
-<!--                    })-->
-<!--                    .catch(error => {-->
-<!--                        console.error('Error Deleting Post:', error);-->
-<!--                    });-->
-<!--            },-->
-<!--            showContent(index) {-->
-<!--                alert(this.Posts[index].Content);-->
-<!--            },-->
-<!--            showMedia(media) {-->
-<!--                this.viewMedia = true;-->
-<!--                if (media){-->
-<!--                    this.mediaShown = require(`../../back/uploads/${media}`);-->
-<!--                }-->
-<!--                else-->
-<!--                {-->
-<!--                    this.mediaShown = "";-->
-<!--                }-->
-<!--            },-->
-<!--            showComments(index) {-->
-<!--                if (this.commentsShown!=index)-->
-<!--                {-->
-<!--                    this.commentsShown=index;-->
-<!--                }-->
-<!--                else-->
-<!--                {-->
-<!--                    this.commentsShown=NaN;-->
-<!--                }-->
-<!--            },-->
-<!--            loadMorePosts() {-->
-<!--                this.displayedPostsCount += 5;-->
-<!--            },-->
-<!--            fetchPosts(){-->
-<!--                function transformPost(post) {-->
-
-<!--                    return {-->
-<!--                        Username: post.userName,-->
-<!--                        Content: post.Caption,-->
-<!--                        Media: post.Media,-->
-<!--                        Comments: post.Comments,-->
-<!--                        Post_ID : post.Post_ID-->
-<!--                    };-->
-<!--                }-->
-
-<!--                axios.get(`http://localhost/php/Social-Media-Clone/src/back/AdminApi.php?action=getAllPosts`)-->
-<!--            .then(response => {-->
-<!--                -->
-<!--                let result = response.data;-->
-<!--                result = result.map(post=>transformPost(post));-->
-<!--                this.Posts = result;-->
-<!--                -->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Error fetching posts:', error);-->
-<!--      });-->
-<!--            }-->
-<!--        },-->
-<!--        name: 'postSection',-->
-<!--        mounted(){-->
-<!--            this.fetchPosts();-->
-<!--        }-->
-<!--    }-->
-<!--</script>-->
 
 
 <style>
