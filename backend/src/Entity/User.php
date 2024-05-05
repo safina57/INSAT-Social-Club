@@ -54,6 +54,7 @@ class User
 
     public function __construct()
     {
+        $this->setStatus("Offline");
         $this->posts = new ArrayCollection();
         $this->reacts = new ArrayCollection();
     }
