@@ -5,3 +5,8 @@ nelmio_cors:
             allow_methods: ['GET', 'POST', 'PUT', 'DELETE']
             allow_headers: ['Content-Type', 'Authorization']
             max_age: 3600
+        '^/homepage/':
+            allow_origin: [ 'http://localhost:8080' ]
+            allow_methods: [ 'GET', 'POST', 'PUT', 'DELETE' ]
+            allow_headers: [ 'Content-Type', 'Authorization' ]
+            max_age: 3600

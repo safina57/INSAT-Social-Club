@@ -15,3 +15,6 @@ api_login1:
 homePage_getAllPosts:
     path: /homepage/getAllPosts
     controller: App\Controller\HomePageController::getAllPosts
+homePage_addPost:
+    path: /homepage/addPost
+    controller: App\Controller\HomePageController::addPost
