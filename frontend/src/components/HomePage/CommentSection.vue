@@ -8,10 +8,10 @@
         <div class="comment__content">
           <div class="comment__user">
             <img :src="comment.img" alt="User"/>
-            <p>{{comment.userName}}</p>
+            <p>{{comment.User.username}}</p>
           </div>
-          <p class="comment__content__text">{{comment.Content}}</p>
-          <p class="comment__content__date">{{comment.Date_Posted}}</p>
+          <p class="comment__content__text">{{comment.content}}</p>
+          <p class="comment__content__date">{{comment.createdAt}}</p>
         </div>
       </div>
     </div>
@@ -51,12 +51,13 @@ export default {
       let data = new FormData();
       data.append('Content',content);
       data.append('Post_ID',post_id);
-      const sessionId = sessionStorage.getItem('sessionId');
+      /*const sessionId = sessionStorage.getItem('sessionId');
       if (sessionId !== null) {
         data.append('sessionId', sessionId);
-      }
+      }*/
+      data.append('User_ID',226);
 
-      axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=addComment`, data)
+      axios.post(`http://127.0.0.1:8000/homepage/addComment`, data)
           .then(response => {
             console.log("Comment Added");
             this.$emit('commentAdded', response);
