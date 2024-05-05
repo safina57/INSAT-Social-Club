@@ -12,6 +12,7 @@ import Admin from '@/views/Admin.vue';
 import WelcomePage from '@/views/WelcomePage.vue';
 //import UserAccount from '@/views/UserAccount.vue';
 import Test from '@/views/TestTest.vue';
+import axios from 'axios';
 
 const routes = [
     {
