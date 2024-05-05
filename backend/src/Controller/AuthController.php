@@ -6,6 +6,7 @@ use App\Service\MailerService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,22 +16,6 @@ use App\Entity\User;
 #[Route('/api')]
 class AuthController extends AbstractController
 {
-    #[Route('/login', name: 'login')]
-    public function login(): JsonResponse
-    {
-        $email = "frefefe";
-        return $this->json($email);
-    }
-
-    #[Route('/login1', name: 'login1', methods: ['POST'])]
-    public function login1(Request $request): JsonResponse
-    {
-        $email = $request->request->get('email');
-        $email = $email."test";
-
-        return $this->json($email);
-    }
-
     #[Route('/signup', name: 'signup', methods: ['POST'])]
     public function signup(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
@@ -173,5 +158,58 @@ class AuthController extends AbstractController
             $verificationCode .= $characters[rand(0, $length - 1)];
         }
         return $verificationCode;
+    }
+    #[Route('/login', name: 'login')]
+    public function login(Request $request , ManagerRegistry $manager ): JsonResponse
+    {
+        $repository = $manager->getRepository(User::class);
+        $username = $request->request->get('Username');
+        $password = $request->request->get('Password');
+        $rememberMe = $request->request->get('rememberMe');
+        $user = $repository->findOneBy(['username' => $username]);
+        if ($user) {
+            if (password_verify($password, $user->getPassword())) {
+                $session = $request->getSession();
+                $session->start();
+                $sessionId=$request->getSession()->getId();
+                $session->set('userId', $user->getId());
+                $session->set('loggedIn', true);
+                $flag=$rememberMe==='true';
+                if($flag) {
+                    $token = $this->generateToken();
+                    $expiry = time() + (60*60*24);
+                    $cookie=new Cookie('rememberMe', $token, $expiry,'/',null,true,true,true,'None');
+                    $response = new JsonResponse(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(),'token'=>$token]);
+                    $response->headers->setCookie($cookie);
+                    return $response;
+                }
+                else{
+                    return $this->json(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId()]);
+                    }
+            }
+            else{
+                return $this->json(['success' => false, 'message' => 'Incorrect username or password']);
+            }
+        }
+        return $this->json(['success' => false, 'message' => 'Incorrect username or password']);
+    }
+    #[Route('/user', name: 'user')]
+    public function user(Request $request): JsonResponse
+    {
+        $session = $request->getSession();
+        $sessionId=$request->request->get('sessionId');
+        $session->setId($sessionId);
+        $session->start();
+
+        return $this->json(['sessionID'=>$sessionId,'userId'=>$session->get('userId')]);
+    }
+    private function generateToken($length = 32) {
+        // Generate random bytes
+        $randomBytes = random_bytes($length / 2);
+
+        // Convert random bytes to hexadecimal string
+        $token = bin2hex($randomBytes);
+
+        return $token;
     }
 }

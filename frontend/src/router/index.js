@@ -12,7 +12,7 @@ import Admin from '@/views/Admin.vue';
 import WelcomePage from '@/views/WelcomePage.vue';
 import UserAccount from '@/views/UserAccount.vue';
 import Test from '@/views/TestTest.vue';
-import axios from "axios";
+//import axios from "axios";
 
 const routes = [
     {
@@ -109,6 +109,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 });
+/*
 router.beforeEach((to, from, next) => {
   // Perform the check if the route requires authentication
   if (to.meta.requiresAuth) {
@@ -161,6 +162,6 @@ function setUserOnline() {
       console.error('Error:', error);
   }
 }
-
+*/
 
 export default router;

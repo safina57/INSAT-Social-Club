@@ -120,19 +120,25 @@ export default {
 
       axios.post(`http://127.0.0.1:8000/api/${action}`, Signup)
           .then(response => {
-            if (response.data.message === 'Failed to log in user' && action === 'login') {
+            if (!response.data.success && action === 'login') {
               this.errorMessage = response.data.message;
               this.error = true;
             }
             if (action === 'login' && response.data.success) {
 
-              sessionStorage.setItem('sessionId', response.data.sessionID);
+              /*sessionStorage.setItem('sessionId', response.data.sessionID);
               sessionStorage.setItem('userId', response.data.userId);
               if (response.data.isAdmin) {
                 this.$router.push('/admin');
               } else {
                 this.$router.push('/Home');
               }
+
+               */
+              this.$router.push('/Home');
+              console.log(response.data);
+              sessionStorage.setItem('sessionId', response.data.sessionID);
+              sessionStorage.setItem('userId', response.data.userId);
             }
             if (this.isSignup && response.data.success) {
               this.$router.push('/login/verifyEmail');
@@ -181,6 +187,6 @@ export default {
       this.formTitle = 'Sign In';
       this.submitButtonText = 'Sign In';
     }
-  }
+  },
 };
 </script>

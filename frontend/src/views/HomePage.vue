@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="Fixed-navbar">
+    <!--<div class="Fixed-navbar">
       <navBar/>
     </div>
     <div class="row">
@@ -16,11 +16,31 @@
         <Inbox/>
       </div>
     </div>
+  -->
   </div>
 </template>
 
 <script>
+  import axios  from "axios";
+  export default {
+    methods: {
 
+      getid() {
+        let data= new FormData();
+        data.append('sessionId', sessionStorage.getItem('sessionId'));
+        axios.post('http://127.0.0.1:8000/api/user', data)
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+      }
+    },
+    mounted() {
+      this.getid();
+    }
+  }
 </script>
 <!--<script>-->
 <!--  import PostSection from '@/components/HomePage/PostSection.vue';-->

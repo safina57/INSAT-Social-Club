@@ -8,10 +8,6 @@ api_login:
     path: /api/login
     controller: App\Controller\AuthController::login
 
-api_login1:
-    path: /api/login1
-    controller: App\Controller\AuthController::login1
-
 api_signup:
     path: /api/signup
     controller: App\Controller\AuthController::signup
@@ -23,3 +19,6 @@ api_verify:
 api_verificationProcess:
     path: /api/verificationProcess
     controller: App\Controller\AuthController::verificationProcess
+api_user:
+    path: /api/user
+    controller: App\Controller\UserController::user
