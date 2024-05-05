@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Service\MailerService;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,7 +12,7 @@ use App\Entity\Report;
 
 class ContactController extends AbstractController
 {
-    #[Route('/contact', name: 'app_contact')]
+    #[Route('/contactUs', name: 'app_contact')]
     public function contactUs(Request $request, ManagerRegistry $doctrine,MailerService $mailer): JsonResponse
     {
         $email = $request->request->get('email');
