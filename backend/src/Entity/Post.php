@@ -39,13 +39,13 @@ class Post
     /**
      * @var Collection<int, React>
      */
-    #[ORM\OneToMany(targetEntity: React::class, mappedBy: 'Post', orphanRemoval: true)]
-    private Collection $reacts;
+   /* #[ORM\OneToMany(targetEntity: React::class, mappedBy: 'Post', orphanRemoval: true)]
+    private Collection $reacts;*/
 
     public function __construct()
     {
         $this->comments = new ArrayCollection();
-        $this->reacts = new ArrayCollection();
+        //$this->reacts = new ArrayCollection();
     }
 
 
@@ -131,34 +131,34 @@ class Post
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, React>
-     */
-    public function getReacts(): Collection
-    {
-        return $this->reacts;
-    }
-
-    public function addReact(React $react): static
-    {
-        if (!$this->reacts->contains($react)) {
-            $this->reacts->add($react);
-            $react->setPost($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReact(React $react): static
-    {
-        if ($this->reacts->removeElement($react)) {
-            // set the owning side to null (unless already changed)
-            if ($react->getPost() === $this) {
-                $react->setPost(null);
-            }
-        }
-        return $this;
-    }
+//
+//    /**
+//     * @return Collection<int, React>
+//     */
+//    public function getReacts(): Collection
+//    {
+//        return $this->reacts;
+//    }
+//
+//    public function addReact(React $react): static
+//    {
+//        if (!$this->reacts->contains($react)) {
+//            $this->reacts->add($react);
+//            $react->setPost($this);
+//        }
+//
+//        return $this;
+//    }
+//
+//    public function removeReact(React $react): static
+//    {
+//        if ($this->reacts->removeElement($react)) {
+//            // set the owning side to null (unless already changed)
+//            if ($react->getPost() === $this) {
+//                $react->setPost(null);
+//            }
+//        }
+//        return $this;
+//    }
 
 }
