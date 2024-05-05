@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Entity\React;
+use App\Entity\Comment;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -147,5 +148,31 @@ class HomePageController extends AbstractController
             ]
         ]);
     }
+    #[Route('/addComment', name: 'addComment',methods: ['POST'])]
+    public function addComment(EntityManagerInterface $entityManager, Request $request): JsonResponse
+    {
+        $comment = new Comment();
 
+        $user = $entityManager->getRepository(User::class)->find($request->get('User_ID'));
+        $post = $entityManager->getRepository(Post::class)->find($request->get('Post_ID'));
+        $comment->setPost($post)
+                ->setUser($user)
+                ->setContent($request->get('Content'));
+
+
+
+        $entityManager->persist($comment);
+        $entityManager->flush();
+
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Comment added successfully',
+            'comment' => [
+                'id' => $comment->getId(),
+                'caption' => $comment->getCaption(),
+
+            ]
+        ]);
+    }
 }
