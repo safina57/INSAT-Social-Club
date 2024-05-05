@@ -33,3 +33,4 @@ class PostFixture extends Fixture
         $manager->flush();
     }
 }
+

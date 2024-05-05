@@ -10,7 +10,7 @@ import Messages from '@/views/Messages.vue';
 import EditProfile from '@/views/EditProfile.vue';
 import Admin from '@/views/Admin.vue';
 import WelcomePage from '@/views/WelcomePage.vue';
-import UserAccount from '@/views/UserAccount.vue';
+//import UserAccount from '@/views/UserAccount.vue';
 import Test from '@/views/TestTest.vue';
 
 const routes = [
@@ -34,7 +34,7 @@ const routes = [
   },
   {
     path: '/',
-    redirect: '/Admin'
+    redirect: '/Home'
   },
   {
     path: '/login/verifyEmail',
@@ -75,7 +75,7 @@ const routes = [
   {
     path: '/profile',
     name: 'profile',
-    component: UserAccount,
+    component: MyAccountPage,
     meta: {
         requiresAuth: true
     }
@@ -108,58 +108,62 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 });
-// router.beforeEach((to, from, next) => {
-//   // Perform the check if the route requires authentication
-//   if (to.meta.requiresAuth) {
-//     // Get the session ID from the session cookie
-//     const sessionId = sessionStorage.getItem('sessionId');
-//     let data =new FormData();
-//     if (sessionId !== null) {
-//       data.append('sessionId', sessionId);
-//     }
-//     axios.defaults.withCredentials = true;
-//     axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=isLoggedIn`,data)
-//         .then(response => {
-//           console.log(response.data.message);
-//           if (!response.data.success) {
-//             // If the user is not logged in, redirect to the login page
-//             next('/WelcomePage');
-//           } else {
-//             // If the user is logged in, continue with the navigation
-//             setUserOnline();
-//             sessionStorage.setItem('sessionId', response.data.sessionID);
-//             sessionStorage.setItem('userId', response.data.userId);
-//             if(to.meta.isAdmin && !response.data.isAdmin){
-//                 next('/Home');
-//             }
-//             next();
-//           }
-//         })
-//         .catch(error => {
-//           console.error('Error checking authentication status:', error);
-//           // If there's an error, prevent navigation
-//           next(false);
-//         });
-//
-//
-//   } else {
-//     // If the route does not require authentication, continue with the navigation
-//     next();
-//   }
-// });
-// function setUserOnline() {
-//   try {
-//       const sessionId = sessionStorage.getItem('sessionId');
-//       if (sessionId) {
-//           const data = new FormData();
-//           data.append('sessionId', sessionId);
-//           axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=setOnline`, data);
-//           console.log('User is online');
-//       }
-//   } catch (error) {
-//       console.error('Error:', error);
-//   }
-// }
 
+router.beforeEach((to, from, next) => {
+  // Perform the check if the route requires authentication
+  if (to.meta.requiresAuth) {
+    // Get the session ID from the session cookie
+    const sessionId = sessionStorage.getItem('sessionId');
+    let data =new FormData();
+    if (sessionId !== null) {
+      data.append('sessionId', sessionId);
+    }
+    axios.defaults.withCredentials = true;
+    axios.post(`http://127.0.0.1:8000/api/isLoggedIn`,data)
+        .then(response => {
+          console.log(response.data.message);
+          if (!response.data.success) {
+            // If the user is not logged in, redirect to the login page
+            next('/WelcomePage');
+          } else {
+            // If the user is logged in, continue with the navigation
+            //setUserOnline();
+            sessionStorage.setItem('sessionId', response.data.sessionID);
+            sessionStorage.setItem('userId', response.data.userId);
+            /*if(to.meta.isAdmin && !response.data.isAdmin){
+                next('/Home');
+            }
+
+             */
+            next();
+          }
+        })
+        .catch(error => {
+          console.error('Error checking authentication status:', error);
+          // If there's an error, prevent navigation
+          next(false);
+        });
+
+
+  } else {
+    // If the route does not require authentication, continue with the navigation
+    next();
+  }
+});
+/*
+function setUserOnline() {
+  try {
+      const sessionId = sessionStorage.getItem('sessionId');
+      if (sessionId) {
+          const data = new FormData();
+          data.append('sessionId', sessionId);
+          axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=setOnline`, data);
+          console.log('User is online');
+      }
+  } catch (error) {
+      console.error('Error:', error);
+  }
+}
+*/
 
 export default router;

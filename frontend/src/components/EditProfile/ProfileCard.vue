@@ -61,7 +61,7 @@ export default {
       let data = new FormData();
       let sessionId = sessionStorage.getItem('sessionId');
       data.append('sessionId', sessionId);
-      axios.post('http://localhost/php/Social-Media-Clone/src/back/EditProfileAPI.php?action=DetailsFetch', data)
+      axios.post('http://127.0.0.1:8000/api/DetailsFetch', data)
         .then(response => {
           if(response.data.success){
             this.username = response.data.data.username;
@@ -70,7 +70,7 @@ export default {
               this.bio = response.data.data.bio;
             }
             if (response.data.data.img !== null){
-              this.avatarUrl = require('../../back/avatars/' + response.data.data.img);
+              this.avatarUrl = require('../../../../backend/avatars/' + response.data.data.img);
             }
             this.setIsModified(false);
           }
@@ -101,11 +101,11 @@ export default {
       const data = new FormData();
       data.append('avatar', file);
       data.append('sessionId', sessionId);
-      axios.post('http://localhost/php/Social-Media-Clone/src/back/EditProfileAPI.php?action=UploadAvatar', data)
+      axios.post('http://127.0.0.1:8000/api/UploadAvatar', data)
         .then(response => {
           if (response.data.success) {
-            console.log(response.data.message);
-            this.avatarUrl = require('../../back/avatars/' + response.data.path);
+            console.log(response.data.path);
+            this.avatarUrl = require('../../../../backend/avatars/' + response.data.path);
           }
         })
         .catch(error => {

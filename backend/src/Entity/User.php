@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
 {
@@ -31,7 +32,7 @@ class User
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $birthDate = null;
 
-    #[ORM\Column(length: 24)]
+    #[ORM\Column(length: 24, options: ["default" => "Offline"])]
     private ?string $status = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -39,7 +40,38 @@ class User
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
+//
+//    /**
+//     * @var Collection<int, Post>
+//     */
+//    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'User')]
+//    private Collection $posts;
+//
+//    /**
+//     * @var Collection<int, React>
+//     */
+//    #[ORM\OneToMany(targetEntity: React::class, mappedBy: 'User', orphanRemoval: true)]
+//    private Collection $reacts;
+//
+//    public function __construct()
+//    {
+//        $this->posts = new ArrayCollection();
+//        $this->reacts = new ArrayCollection();
+//    }
 
+
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $resetPasswordToken = null;
+
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $rememberMeToken = null;
+
+    public function __construct()
+    {
+        $this->setStatus("Offline");
+        $this->posts = new ArrayCollection();
+        $this->reacts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -135,10 +167,35 @@ class User
         return $this->image;
     }
 
-    public function setImage(?string $image): static
+    public function setImage(?string $image): self
     {
         $this->image = $image;
 
         return $this;
     }
+
+    public function getResetPasswordToken(): ?string
+    {
+        return $this->resetPasswordToken;
+    }
+
+    public function setResetPasswordToken(?string $resetPasswordToken): static
+    {
+        $this->resetPasswordToken = $resetPasswordToken;
+
+        return $this;
+    }
+
+    public function getRememberMeToken(): ?string
+    {
+        return $this->rememberMeToken;
+    }
+
+    public function setRememberMeToken(?string $rememberMeToken): static
+    {
+        $this->rememberMeToken = $rememberMeToken;
+
+        return $this;
+    }
 }
+

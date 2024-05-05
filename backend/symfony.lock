@@ -64,6 +64,24 @@
             "./tests/bootstrap.php"
         ]
     },
+    "symfony/amazon-mailer": {
+        "version": "6.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.4",
+            "ref": "9648db3ecae5c8a6b1a5f74715d3907124348815"
+        }
+    },
+    "symfony/apache-pack": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "0f18b4decdf5695d692c1d0dfd65516a07a6adf1"
+        }
+    },
     "symfony/asset-mapper": {
         "version": "6.4",
         "recipe": {
@@ -78,6 +96,15 @@
             "./config/packages/asset_mapper.yaml",
             "./importmap.php"
         ]
+    },
+    "symfony/brevo-mailer": {
+        "version": "6.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "6.4",
+            "ref": "7c1038ceb733175f610a913a885a7c8b552b703a"
+        }
     },
     "symfony/console": {
         "version": "6.4",

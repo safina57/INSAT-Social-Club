@@ -8,9 +8,6 @@ api_login:
     path: /api/login
     controller: App\Controller\AuthController::login
 
-api_login1:
-    path: /api/login1
-    controller: App\Controller\AuthController::login1
 
 admin_api_getAllPosts:
     path: /admin_api/getAll/Post
@@ -35,3 +32,58 @@ admin_api_getCommentsByPostId:
 admin_api_getPostActivity:
     path: /admin_api/postActivity
     controller: App\Controller\AdminController::postActivity
+
+homePage_getAllPosts:
+    path: /homepage/getAllPosts
+    controller: App\Controller\HomePageController::getAllPosts
+homePage_addPost:
+    path: /homepage/addPost
+    controller: App\Controller\HomePageController::addPost
+homePage_addComment:
+    path: /homepage/addComment
+    controller: App\Controller\HomePageController::addComment
+homePage_getComments:
+    path: /homepage/getComments
+    controller: App\Controller\HomePageController::getComments
+homePage_getUser:
+    path: /homepage/getUser
+    controller: App\Controller\HomePageController::getUserInfo
+
+api_signup:
+    path: /api/signup
+    controller: App\Controller\AuthController::signup
+
+api_verify:
+    path: /api/verify
+    controller: App\Controller\AuthController::verify
+
+api_verificationProcess:
+    path: /api/verificationProcess
+    controller: App\Controller\AuthController::verificationProcess
+
+api_resetPasswordRequest:
+    path: /api/resetPasswordRequest
+    controller: App\Controller\AuthController::resetPasswordRequest
+
+api_resetPassword:
+    path: /api/resetPassword
+    controller: App\Controller\AuthController::resetPassword
+api_isLoggedIn:
+    path: /api/isLoggedIn
+    controller: App\Controller\AuthController::isLoggedIn
+api_logout:
+    path: /api/logout
+    controller: App\Controller\AuthController::logout
+
+api_UpdatePersonalDetails:
+    path: /api/UpdatePersonalDetails
+    controller: App\Controller\EditProfileController::UpdatePersonalDetails
+
+api_DetailsFetch:
+    path: /api/DetailsFetch
+    controller: App\Controller\EditProfileController::DetailsFetch
+
+api_UploadAvatar:
+    path: /api/UploadAvatar
+    controller: App\Controller\EditProfileController::UploadAvatar
+
