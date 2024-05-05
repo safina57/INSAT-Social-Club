@@ -31,7 +31,7 @@ class User
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $birthDate = null;
 
-    #[ORM\Column(length: 24)]
+    #[ORM\Column(length: 24, options: ["default" => "Offline"])]
     private ?string $status = null;
 
     #[ORM\Column(length: 255, nullable: true)]

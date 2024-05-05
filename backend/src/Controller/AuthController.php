@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Doctrine\Persistence\ObjectManager;
 use App\Service\MailerService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -124,9 +123,8 @@ class AuthController extends AbstractController
     }
 
     #[Route('/verificationProcess', name: 'verificationProcess', methods: ['POST'])]
-    public function verificationProcess(Request $request, ObjectManager $manager): JsonResponse
+    public function verificationProcess(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
-        $user = new User();
         $code = $request->request->get('code');
         $verification = $request->request->get('verificationCode');
         $fullName = $request->request->get('FullName');
@@ -137,16 +135,17 @@ class AuthController extends AbstractController
 
         $password = $request->request->get('Password');
 
-        $birthDate = $request->request->get('BirthDate');
 
         $result = $code === $verification;
         if ($result) {
+            $user = new User();
+            $entityManager = $doctrine->getManager();
             $user->setFullName($fullName);
             $user->setEmail($email);
             $user->setUsername($username);
             $user->setPassword($password);
-            $manager->persist($user);
-            $manager->flush();
+            $entityManager->persist($user);
+            $entityManager->flush();
             return $this->json(['success' => true, 'message' => 'Signed up successfully']);
         } else {
             return $this->json(['success' => false, 'message' => 'Verification code is incorrect']);
