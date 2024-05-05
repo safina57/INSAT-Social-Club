@@ -8,10 +8,6 @@ api_login:
     path: /api/login
     controller: App\Controller\AuthController::login
 
-api_login1:
-    path: /api/login1
-    controller: App\Controller\AuthController::login1
-
 homePage_getAllPosts:
     path: /homepage/getAllPosts
     controller: App\Controller\HomePageController::getAllPosts
@@ -27,3 +23,30 @@ homePage_getComments:
 homePage_getUser:
     path: /homepage/getUser
     controller: App\Controller\HomePageController::getUserInfo
+
+api_signup:
+    path: /api/signup
+    controller: App\Controller\AuthController::signup
+
+api_verify:
+    path: /api/verify
+    controller: App\Controller\AuthController::verify
+
+api_verificationProcess:
+    path: /api/verificationProcess
+    controller: App\Controller\AuthController::verificationProcess
+
+api_resetPasswordRequest:
+    path: /api/resetPasswordRequest
+    controller: App\Controller\AuthController::resetPasswordRequest
+
+api_resetPassword:
+    path: /api/resetPassword
+    controller: App\Controller\AuthController::resetPassword
+api_isLoggedIn:
+    path: /api/isLoggedIn
+    controller: App\Controller\AuthController::isLoggedIn
+api_logout:
+    path: /api/logout
+    controller: App\Controller\AuthController::logout
+

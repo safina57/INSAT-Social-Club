@@ -27,9 +27,9 @@
                 </li>
             </ul>
         </div>
-        <form class="d-flex">
-            <searchBar :users="users"/>
-        </form>
+<!--        <form class="d-flex">-->
+<!--            <searchBar :users="users"/>-->
+<!--        </form>-->
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link" style="font-size: 20px" @click="logout">Logout</a>
@@ -41,24 +41,26 @@
 
 <script>
 import axios from "axios";
-import searchBar from '@/components/searchBar.vue';
+// import searchBar from '@/components/searchBar.vue';
 
 
     export default {
-        data () {
-            return {
-                users: [],
-                isAdmin: false
-            }
-        },
+        // data () {
+        //     return {
+        //         users: [],
+        //         isAdmin: false
+        //     }
+        // },
         name: 'NavBar',
         methods: {
             logout() {
               const sessionID = sessionStorage.getItem('sessionId');
+              const userId = sessionStorage.getItem('userId');
               let data =new FormData();
               data.append('sessionID', sessionID);
+              data.append('userID', userId);
               axios.defaults.withCredentials = true;
-              axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=logout`,data)
+              axios.post(`http://127.0.0.1:8000/api/logout`,data)
               .then(response => {
                 console.log(response.data);
                 if(response.data.success) {
@@ -89,55 +91,55 @@ import searchBar from '@/components/searchBar.vue';
             redirectContactUs() {
                 this.$router.push('/Contact');
             },
-            fetchUsersInfo(){
-            function transformUserData(user) {
-                    return {
-                    
-                        userID: user.userID,
-                        name : user.fullName,
-                        username: user.userName,
-                        email: user.email,
-                        avatar: user.img,//? require(`../back/avatars/${user.img}`) : require(`../../public/img/noProfileImage.jpg`),
-                        bio: user.bio,
-                    
-                    };
-                }
-                axios.get(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=getAllUsers`)
-                .then(response => {
-                    let result = response.data;
-                    result = result.map(user=>transformUserData(user));
-                    this.users = result;
-                })
-                .catch(error => {
-                    console.error('Error fetching User info:', error);
-        });
-            }
+        //     fetchUsersInfo(){
+        //     function transformUserData(user) {
+        //             return {
+        //
+        //                 userID: user.userID,
+        //                 name : user.fullName,
+        //                 username: user.userName,
+        //                 email: user.email,
+        //                 avatar: user.img? require(`../back/avatars/${user.img}`) : require(`../../public/img/noProfileImage.jpg`),
+        //                 bio: user.bio,
+        //
+        //             };
+        //         }
+        //         axios.get(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=getAllUsers`)
+        //         .then(response => {
+        //             let result = response.data;
+        //             result = result.map(user=>transformUserData(user));
+        //             this.users = result;
+        //         })
+        //         .catch(error => {
+        //             console.error('Error fetching User info:', error);
+        // });
+        //     }
         },
-        components: {
-            searchBar
-        },
-        created () {
-            this.fetchUsersInfo();
-        },
-        mounted() {
-            let data = new FormData();
-            let sessionId = sessionStorage.getItem('sessionId');
-            data.append('sessionId', sessionId);
-            axios.post('http://localhost/php/Social-Media-Clone/src/back/api.php?action=verifyAdmin', data)
-            .then(response => {
-                if(response.data.success){
-                    if(response.data.isAdmin){
-                        this.isAdmin = true;
-                    }
-                    else{
-                        this.isAdmin = false;
-                    }
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching profile details:', error);
-        });
-        }
+        // components: {
+        //     searchBar
+        // },
+        // created () {
+        //     this.fetchUsersInfo();
+        // },
+        // mounted() {
+        //     let data = new FormData();
+        //     let sessionId = sessionStorage.getItem('sessionId');
+        //     data.append('sessionId', sessionId);
+        //     axios.post('http://localhost/php/Social-Media-Clone/src/back/api.php?action=verifyAdmin', data)
+        //     .then(response => {
+        //         if(response.data.success){
+        //             if(response.data.isAdmin){
+        //                 this.isAdmin = true;
+        //             }
+        //             else{
+        //                 this.isAdmin = false;
+        //             }
+        //   }
+        // })
+        // .catch(error => {
+        //   console.error('Error fetching profile details:', error);
+        // });
+        // }
     }
 
 </script>
