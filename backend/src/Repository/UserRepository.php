@@ -16,6 +16,22 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function addToken($data,$token, $entityManager) : bool
+    {
+        $user = null;
+        if(isset($data['email'])) {
+            $user = $this->findOneBy(['email' => $data['email']]);
+            $user->setResetPasswordToken($token);
+        }
+        elseif(isset($data['username'])){
+            $user = $this->findOneBy(['username' => $data['username']]);
+            $user->setRememberMeToken($token);
+        }
+        $entityManager->persist($user);
+        $entityManager->flush();
+        return true;
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

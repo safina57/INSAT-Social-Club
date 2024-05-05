@@ -23,3 +23,11 @@ api_verify:
 api_verificationProcess:
     path: /api/verificationProcess
     controller: App\Controller\AuthController::verificationProcess
+
+api_resetPasswordRequest:
+    path: /api/resetPasswordRequest
+    controller: App\Controller\AuthController::resetPasswordRequest
+
+api_resetPassword:
+    path: /api/resetPassword
+    controller: App\Controller\AuthController::resetPassword
