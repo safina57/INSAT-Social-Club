@@ -216,7 +216,7 @@ export default {
       update.append('sessionId', sessionId);
 
       if (personalDetailsCount > 0 || passwordCount > 0){
-        axios.post('http://localhost/php/Social-Media-Clone/src/back/EditProfileAPI.php?action=UpdatePersonalDetails', update)
+        axios.post('http://127.0.0.1:8000/api/UpdatePersonalDetails', update)
           .then(response => {
             if (response.data.success) {
               this.setIsModified(true);

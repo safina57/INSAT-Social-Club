@@ -82,7 +82,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchAvatar();
+    //this.fetchAvatar();
   },
   props: ['Posts'],
   methods: {
@@ -114,11 +114,11 @@ export default {
     fetchComments(post) {
       let data = new FormData();
       data.append('Post_ID', post.Post_ID);
-      axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=getComments`, data)
+      axios.post(`http://127.0.0.1:8000/homepage/getComments`, data)
           .then(response => {
             this.comments = response.data;
             this.comments.forEach(comment => {
-              comment.img = comment.img === null ? require('../../../public/img/noProfileImage.jpg') : require(`../../back/avatars/${comment.img}`);
+              comment.img = comment.img === null ? false: require('../../../public/img/noProfileImage.jpg');//require('../../../public/img/noProfileImage.jpg') : "";//require(`../../back/avatars/${comment.img}`);
             });
 
           })
@@ -140,11 +140,12 @@ export default {
       data.append('Content', content);
       data.append('Media', fileInput.files[0]);
       console.log('posting data');
-      const sessionId = sessionStorage.getItem('sessionId');
+      /*const sessionId = sessionStorage.getItem('sessionId');
       if (sessionId !== null) {
         data.append('sessionId', sessionId);
-      }
-      axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=addPost`, data)
+      }*/
+      data.append('user_id', 226);
+      axios.post(`http://127.0.0.1:8000/homepage/addPost`, data)
           .then(response => {
             console.log("Post Added");
             this.$emit('postAdded', response);
@@ -155,29 +156,29 @@ export default {
 
             console.error('Error Adding Post:', error);
           });
-    },
+    }, //still need to fix adding image
     handleCommentAdded(post) {
       this.fetchComments(post);
     },
     share(post) {
       let data = new FormData();
       data.append('Post_ID', post.Post_ID);
-      const sessionId = sessionStorage.getItem('sessionId');
-      data.append('sessionId', sessionId);
-      axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=sharePost`, data)
+      //const sessionId = sessionStorage.getItem('sessionId');
+      data.append('user_id', 226);
+      axios.post(`http://127.0.0.1:8000/homepage/addPost`, data)
           .then(response => {
             this.$emit('postAdded', response);
           })
           .catch(error => {
             console.error('Error Deleting Post:', error);
           });
-    },
+    },  //Done
     react(post) {
       let data = new FormData();
-      const currentUserID = sessionStorage.getItem('userId');
+      //const currentUserID = sessionStorage.getItem('userId');
       data.append('Post_ID', post.Post_ID);
-      data.append('User_ID', currentUserID);
-      axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=reactToPost`, data)
+      data.append('User_ID', 226);
+      axios.post(`http://127.0.0.1:8000/homepage/addReact`, data)
           .then(response => {
             this.$emit('postAdded', response);
             console.log('isLiked');
@@ -199,22 +200,22 @@ export default {
       }
 
     },
-    fetchAvatar() {
-      let data = new FormData();
-      let sessionId = sessionStorage.getItem('sessionId');
-      data.append('sessionId', sessionId);
-      axios.post('http://localhost/php/Social-Media-Clone/src/back/EditProfileAPI.php?action=fetchAvatar', data)
-          .then(response => {
-            if (response.data.success) {
-              if (response.data.path !== null) {
-                this.avatar = require('../../back/avatars/' + response.data.path);
-              }
-            }
-          })
-          .catch(error => {
-            console.error('Error fetching profile details:', error);
-          });
-    },
+    // fetchAvatar() {
+    //   let data = new FormData();
+    //   let sessionId = sessionStorage.getItem('sessionId');
+    //   data.append('sessionId', sessionId);
+    //   axios.post('http://localhost/php/Social-Media-Clone/src/back/EditProfileAPI.php?action=fetchAvatar', data)
+    //       .then(response => {
+    //         if (response.data.success) {
+    //           if (response.data.path !== null) {
+    //             this.avatar = require('../../back/avatars/' + response.data.path);
+    //           }
+    //         }
+    //       })
+    //       .catch(error => {
+    //         console.error('Error fetching profile details:', error);
+    //       });
+    // },
     formatMessageTime(time) {
       const messageTime = new Date(time);
       const today = new Date();
@@ -247,6 +248,7 @@ export default {
   },
   created() {
     this.routePath = window.location.pathname;
+
   },
   components: {
     comments: CommentSection

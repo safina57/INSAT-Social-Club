@@ -15,22 +15,19 @@
   </template>
 
 
-<script>
+  <script>
+  import navBar from '@/components/navbar.vue';
+  import ProfileCard from '@/components/EditProfile/ProfileCard.vue';
+  import EditForm from '@/components/EditProfile/EditForm.vue';
 
-</script>
-<!--  <script>-->
-<!--  import navBar from '@/components/navbar.vue';-->
-<!--  import ProfileCard from '@/components/EditProfile/ProfileCard.vue';-->
-<!--  import EditForm from '@/components/EditProfile/EditForm.vue';-->
-
-<!--  export default {-->
-<!--    components: {-->
-<!--      navBar,-->
-<!--      ProfileCard,-->
-<!--      EditForm-->
-<!--    }-->
-<!--  }-->
-<!--  </script>-->
+  export default {
+    components: {
+      navBar,
+      ProfileCard,
+      EditForm
+    }
+  }
+  </script>
 
 <style scoped>
 .row {

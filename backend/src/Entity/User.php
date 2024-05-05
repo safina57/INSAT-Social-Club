@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User
 {
@@ -39,18 +40,25 @@ class User
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
+//
+//    /**
+//     * @var Collection<int, Post>
+//     */
+//    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'User')]
+//    private Collection $posts;
+//
+//    /**
+//     * @var Collection<int, React>
+//     */
+//    #[ORM\OneToMany(targetEntity: React::class, mappedBy: 'User', orphanRemoval: true)]
+//    private Collection $reacts;
+//
+//    public function __construct()
+//    {
+//        $this->posts = new ArrayCollection();
+//        $this->reacts = new ArrayCollection();
+//    }
 
-    /**
-     * @var Collection<int, Post>
-     */
-    #[ORM\OneToMany(targetEntity: Post::class, mappedBy: 'User')]
-    private Collection $posts;
-
-    /**
-     * @var Collection<int, React>
-     */
-    #[ORM\OneToMany(targetEntity: React::class, mappedBy: 'User', orphanRemoval: true)]
-    private Collection $reacts;
 
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $resetPasswordToken = null;
@@ -159,69 +167,9 @@ class User
         return $this->image;
     }
 
-    public function setImage(?string $image): static
+    public function setImage(?string $image): self
     {
         $this->image = $image;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Post>
-     */
-    public function getPosts(): Collection
-    {
-        return $this->posts;
-    }
-
-    public function addPost(Post $post): static
-    {
-        if (!$this->posts->contains($post)) {
-            $this->posts->add($post);
-            $post->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePost(Post $post): static
-    {
-        if ($this->posts->removeElement($post)) {
-            // set the owning side to null (unless already changed)
-            if ($post->getUser() === $this) {
-                $post->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, React>
-     */
-    public function getReacts(): Collection
-    {
-        return $this->reacts;
-    }
-
-    public function addReact(React $react): static
-    {
-        if (!$this->reacts->contains($react)) {
-            $this->reacts->add($react);
-            $react->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReact(React $react): static
-    {
-        if ($this->reacts->removeElement($react)) {
-            // set the owning side to null (unless already changed)
-            if ($react->getUser() === $this) {
-                $react->setUser(null);
-            }
-        }
 
         return $this;
     }
@@ -250,3 +198,4 @@ class User
         return $this;
     }
 }
+

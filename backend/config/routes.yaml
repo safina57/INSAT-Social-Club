@@ -8,6 +8,47 @@ api_login:
     path: /api/login
     controller: App\Controller\AuthController::login
 
+
+admin_api_getAllPosts:
+    path: /admin_api/getAll/Post
+    controller: App\Controller\AdminController::getAll
+
+admin_api_getAllUsers:
+    path: /admin_api/getAll/User
+    controller: App\Controller\AdminController::getAll
+
+admin_api_getAllReports:
+    path: /admin_api/getAll/Report
+    controller: App\Controller\AdminController::getAll
+
+admin_api_getValue:
+    path: /admin_api/getValue
+    controller: App\Controller\AdminController::getValue
+
+admin_api_getCommentsByPostId:
+    path: /admin_api/getCommentsByPostId
+    controller: App\Controller\AdminController::getCommentsByPostId
+
+admin_api_getPostActivity:
+    path: /admin_api/postActivity
+    controller: App\Controller\AdminController::postActivity
+
+homePage_getAllPosts:
+    path: /homepage/getAllPosts
+    controller: App\Controller\HomePageController::getAllPosts
+homePage_addPost:
+    path: /homepage/addPost
+    controller: App\Controller\HomePageController::addPost
+homePage_addComment:
+    path: /homepage/addComment
+    controller: App\Controller\HomePageController::addComment
+homePage_getComments:
+    path: /homepage/getComments
+    controller: App\Controller\HomePageController::getComments
+homePage_getUser:
+    path: /homepage/getUser
+    controller: App\Controller\HomePageController::getUserInfo
+
 api_signup:
     path: /api/signup
     controller: App\Controller\AuthController::signup
@@ -36,3 +77,15 @@ api_logout:
 api_contactUs:
     path: /contactUs
     controller: App\Controller\ContactController::contactUs
+api_UpdatePersonalDetails:
+    path: /api/UpdatePersonalDetails
+    controller: App\Controller\EditProfileController::UpdatePersonalDetails
+
+api_DetailsFetch:
+    path: /api/DetailsFetch
+    controller: App\Controller\EditProfileController::DetailsFetch
+
+api_UploadAvatar:
+    path: /api/UploadAvatar
+    controller: App\Controller\EditProfileController::UploadAvatar
+

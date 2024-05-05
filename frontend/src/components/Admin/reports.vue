@@ -11,7 +11,10 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="report in reports" :key="report.id">
+                <tr v-if="reports.length === 0">
+                  <td colspan="5" class="Note">No Reports found! You have a day off then ;)</td>
+                </tr>
+                <tr v-else v-for="report in reports" :key="report.id">
                     <td>{{ report.id }}</td>
                     <td>{{ report.username }}</td>
                     <td>{{ report.email }}</td>
@@ -28,72 +31,65 @@
 </template>
 
 <script>
+import axios from 'axios';
+    export default {
+        data() {
+            return {
+                reports: []
+            }
+        },
+        methods: {
+            deleteReport(report) {
+                axios.post(`http://127.0.0.1:8000/admin_api/deleteRow/report/${report.id}`)
+                    .then(response => {
+                        if(response.data.success) {
+                          alert("Report Deleted Successfully!")
+                          this.fetchReports();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error Deleting Report:', error);
+                    });
+            },
+            showContent(report) {
+                alert(report.content);
+            },
+            fetchReports(){
+                function transformReport(report) {
 
+                    return {
+                        id: report.id,
+                        fullname: report.fullname,
+                        email: report.email,
+                        content: report.message
+                    };
+                }
+
+                axios.get(`http://127.0.0.1:8000/admin_api/getAll/report`)
+            .then(response => {
+
+                let result = response.data;
+                result = result.map(report=>transformReport(report));
+                this.reports = result;
+
+            })
+            .catch(error => {
+                console.error('Error fetching reports:', error);
+      });
+            }
+        },
+        mounted() {
+            this.fetchReports();
+        },
+        name: 'reportSection'
+    }
 </script>
-
-<!--<script>-->
-<!--import axios from 'axios';-->
-<!--    export default {-->
-<!--        data() {-->
-<!--            return {-->
-<!--                reports: []-->
-<!--            }-->
-<!--        },-->
-<!--        methods: {-->
-<!--            deleteReport(report) {-->
-<!--                let data = new FormData();-->
-<!--                data.append('Report_ID',report.id);-->
-<!--                axios.post(`http://localhost/php/Social-Media-Clone/src/back/AdminApi.php?action=deleteReport`, data)-->
-<!--                    .then(response => {-->
-<!--                        console.log(response.data.message);-->
-<!--                        if(response.data.success) {-->
-<!--                          this.fetchReports();-->
-<!--                        }-->
-<!--                    })-->
-<!--                    .catch(error => {-->
-<!--                        console.error('Error Deleting Report:', error);-->
-<!--                    });-->
-<!--            },-->
-<!--            showContent(report) {-->
-<!--                alert(report.content);-->
-<!--            },-->
-<!--            fetchReports(){-->
-<!--                function transformReport(report) {-->
-
-<!--                    return {-->
-<!--                        id: report.report_id,-->
-<!--                        username: report.fullName,-->
-<!--                        email: report.email,-->
-<!--                        content: report.message-->
-<!--                    };-->
-<!--                }-->
-
-<!--                axios.get(`http://localhost/php/Social-Media-Clone/src/back/AdminApi.php?action=getReports`)-->
-<!--            .then(response => {-->
-<!--                -->
-<!--                let result = response.data;-->
-<!--                result = result.map(report=>transformReport(report));-->
-<!--                this.reports = result;-->
-<!--                -->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Error fetching posts:', error);-->
-<!--      });-->
-<!--            }-->
-<!--        },-->
-<!--        mounted() {-->
-<!--            this.fetchReports();-->
-<!--        },-->
-<!--        name: 'reportSection'-->
-<!--    }-->
-<!--</script>-->
 
 
 <style>
     .table {
         width: 90%;
-        margin: 20px auto;
-        margin-top:10px;
+        margin: 10px auto 20px;
     }
     .table-container {
         margin-right: 40px;
