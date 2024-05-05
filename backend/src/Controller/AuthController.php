@@ -223,6 +223,9 @@ class AuthController extends AbstractController
                     $token = $this->generateToken();
                     $expiry = time() + (60*60*24);
                     $cookie=new Cookie('rememberMe', $token, $expiry,'/',null,true,true,true,'None');
+                    $data = ['username' => $username];
+                    $entityManager = $manager->getManager();
+                    $repository->addToken($data, $token, $entityManager);
                     $response = new JsonResponse(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(),'token'=>$token]);
                     $response->headers->setCookie($cookie);
                     return $response;
