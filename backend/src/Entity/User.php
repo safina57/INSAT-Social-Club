@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -69,8 +67,6 @@ class User
     public function __construct()
     {
         $this->setStatus("Offline");
-        $this->posts = new ArrayCollection();
-        $this->reacts = new ArrayCollection();
     }
 
     public function getId(): ?int
