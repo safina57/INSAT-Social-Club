@@ -20,6 +20,35 @@ class PostRepository extends ServiceEntityRepository
         parent::__construct($registry, Post::class);
     }
 
+    public function getTotalPostsPerDay(): array
+    {
+        $query = $this->createQueryBuilder('p')
+            ->select('p.createdAt AS date')
+            ->addSelect('COUNT(p.id) AS totalPosts')
+            ->groupBy('date')
+            ->getQuery();
+
+        $results = $query->getResult();
+
+        // Format the dates and counts
+        $formattedData = [
+            'dates' => [],
+            'counts' => []
+        ];
+
+        foreach ($results as $result) {
+            // Convert the datetime object to a string in 'Y-m-d' format
+            $date = $result['date']->format('Y-m-d');
+
+            $formattedData['dates'][] = $date;
+            $formattedData['counts'][] = (int) $result['totalPosts'];
+        }
+
+        return $formattedData;
+    }
+
+
+
     //    /**
     //     * @return Post[] Returns an array of Post objects
     //     */
