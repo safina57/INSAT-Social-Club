@@ -240,16 +240,7 @@ class AuthController extends AbstractController
         }
         return $this->json(['success' => false, 'message' => 'Incorrect username or password']);
     }
-    #[Route('/user', name: 'user')]
-    public function user(Request $request): JsonResponse
-    {
-        $session = $request->getSession();
-        $sessionId=$request->request->get('sessionId');
-        $session->setId($sessionId);
-        $session->start();
 
-        return $this->json(['sessionID'=>$sessionId,'userId'=>$session->get('userId')]);
-    }
     private function generateToken(): string
     {
         // Generate random bytes
@@ -385,10 +376,17 @@ class AuthController extends AbstractController
         $session = $request->getSession();
         $session->invalidate();
         $token = $request->cookies->get('rememberMe');
+
         if ($token) {
             $repository = $doctrine->getRepository(User::class);
-            $entityManager = $doctrine->getManager();
-            $repository->removeToken($token, $entityManager);
+            $userId = $request->request->get('userID');
+            $user = $repository->findOneBy(['id' => $userId]);
+            if ($user){
+                $user->setRememberMeToken(null);
+                $entityManager = $doctrine->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+            }
             $response = new JsonResponse(['success' => true, 'message' => 'Logged out successfully']);
             $response->headers->clearCookie('rememberMe');
             return $response;
