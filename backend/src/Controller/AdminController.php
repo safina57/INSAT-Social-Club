@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Repository\PostRepository;
 use App\Entity\User;
 use App\Entity\Post;
 use App\Entity\Report;
@@ -81,5 +82,12 @@ class AdminController extends AbstractController
     {
         $allowedTableNames = ['post', 'report', 'user'];
         return in_array(strtolower($tableName), $allowedTableNames);
+    }
+
+    #[Route('/postActivity', name: 'postActivity', methods: ['GET'])]
+    public function postActivity(PostRepository $postRepository): JsonResponse
+    {
+        $postActivityData = $postRepository->getTotalPostsPerDay();
+        return $this->json($postActivityData);
     }
 }

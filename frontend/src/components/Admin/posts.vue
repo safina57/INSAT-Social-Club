@@ -52,17 +52,23 @@
             </div>
         </div>
     </div>
+
     <div class="image-container" v-if="mediaShown">
         <img :src="mediaShown" alt="Media Image" style="max-width: 100%; height: auto;">
     </div>
     <div class="image-container" v-else>
         <p v-if="viewMedia">No Media to show</p>
     </div>
+
+    <div class="Chart-Container">
+      <canvas ref="chartCanvas"></canvas>
+    </div>
 </template>
 
 
 <script>
 import axios from 'axios';
+import Chart from 'chart.js/auto';
     export default {
       data() {
         return {
@@ -137,16 +143,64 @@ import axios from 'axios';
                 if (result.length > 0)
                 {
                   console.log("Data fetched successfully");
-                  this.Posts = result ;
+                  this.Posts = result;
                 }
               })
               .catch(error => {
                 console.error('Error fetching posts:', error);
               })
+        },
+        async fetchPostActivity() {
+          try {
+            const response = await axios.get('http://127.0.0.1:8000/admin_api/postActivity');
+            const postData = response.data;
+            console.log(postData.dates);
+            console.log(postData.counts);
+            this.renderChart(postData.dates, postData.counts);
+          } catch (error) {
+            console.error('Error fetching post activity:', error);
+          }
+        },
+        renderChart(dates, counts)
+        {
+          const canvasRef = this.$refs.chartCanvas;
+          if (!canvasRef) {
+            console.error("Canvas element not found");
+            return;
+          }
+
+          const postChartCanvas = canvasRef.getContext('2d');
+          if (!postChartCanvas) {
+            console.error("Unable to get 2D context for canvas");
+            return;
+          }
+
+          new Chart(postChartCanvas, {
+            type: 'line',
+            data: {
+              labels: dates,
+              datasets: [{
+                label: 'Number of Posts per Day',
+                data: counts,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+
         }
       },
       mounted() {
         this.fetchPosts();
+        this.fetchPostActivity();
       },
       name: 'postSection',
     }
@@ -171,5 +225,13 @@ import axios from 'axios';
         justify-content: center;
         align-items: center;
         margin-top: 20px;
+    }
+
+    .Chart-Container {
+      background-color: #f2e9e4;
+      padding: 20px;
+      border-radius: 20px;
+      margin-top: 20px;
+      align-items: center;
     }
 </style>

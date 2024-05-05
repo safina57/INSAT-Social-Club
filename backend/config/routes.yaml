@@ -32,3 +32,6 @@ admin_api_getCommentsByPostId:
     path: /admin_api/getCommentsByPostId
     controller: App\Controller\AdminController::getCommentsByPostId
 
+admin_api_getPostActivity:
+    path: /admin_api/postActivity
+    controller: App\Controller\AdminController::postActivity

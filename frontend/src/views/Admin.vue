@@ -5,7 +5,7 @@
         <component :is="activeComponent" />
       </div>
     </div>
-  </template>
+</template>
 
   <script>
   import { SidebarMenu } from 'vue-sidebar-menu'
@@ -71,7 +71,7 @@
                 this.activeComponent = reports;
                 break;
             case 'home page':
-                // this.$router.push('/Home');
+                this.$router.push('/Home');
                 break;
             case 'logout':
                 this.logout();
