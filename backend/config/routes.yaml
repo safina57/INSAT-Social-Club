@@ -74,7 +74,9 @@ api_isLoggedIn:
 api_logout:
     path: /api/logout
     controller: App\Controller\AuthController::logout
-
+api_contactUs:
+    path: /contactUs
+    controller: App\Controller\ContactController::contactUs
 api_UpdatePersonalDetails:
     path: /api/UpdatePersonalDetails
     controller: App\Controller\EditProfileController::UpdatePersonalDetails
