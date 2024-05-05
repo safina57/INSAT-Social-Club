@@ -17,7 +17,7 @@
     </li>
   </ul>
 </template>
-
+<script></script>
 <script>
 import axios from "axios";
 import searchBar from '@/components/searchBar.vue';
@@ -51,12 +51,12 @@ export default {
     fetchUsers() {
       function transformUserData(user) {
                     return {
-                    
+
                         userID: user.userID,
                         username: user.username,
-                        avatar: user.img? require(`../../back/avatars/${user.img}`) : require(`../../../public/img/noProfileImage.jpg`),
+                        avatar: user.img,//? require(`../../back/avatars/${user.img}`) : require(`../../../public/img/noProfileImage.jpg`),
                         userStatus: user.userStatus
-                    
+
                     };
                 }
       const sessionId = sessionStorage.getItem('sessionId');
