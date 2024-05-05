@@ -2,19 +2,19 @@
     <div class="Fixed-navbar">
       <navBar/>
     </div>
-<!--    <div class="row">-->
-<!--      <div class="fixed-column left">-->
-<!--        <ProfileCard :showUploadButton="false"/>-->
-<!--      </div>-->
-<!--      <div class="scrollable-column" ref="scrollableColumn">-->
-<!--          <PostSection :Posts="visiblePosts()" @postAdded="handlePostAdded()" @postDeleted="handlePostDeleted()"/>-->
-<!--          <p v-if="visiblePostCount - Posts.length > 0" class="Note">No more posts to load</p>-->
-<!--    <button v-if="Posts.length > 8" class="btn btn-info"  @click="loadMorePosts()">Load More</button>-->
-<!--      </div>-->
-<!--      <div class="fixed-column right">-->
-<!--        <Inbox/>-->
-<!--      </div>-->
-<!--    </div>-->
+    <div class="row">
+     <div class="fixed-column left">
+       <ProfileCard :showUploadButton="false"/>
+      </div>
+      <div class="scrollable-column" ref="scrollableColumn">
+         <PostSection :Posts="visiblePosts()" @postAdded="handlePostAdded()" @postDeleted="handlePostDeleted()"/>
+          <p v-if="visiblePostCount - Posts.length > 0" class="Note">No more posts to load</p>
+    <button v-if="Posts.length > 8" class="btn btn-info"  @click="loadMorePosts()">Load More</button>
+      </div>
+      <div class="fixed-column right">
+        <Inbox/>
+      </div>
+    </div>
 </template>
 
 
