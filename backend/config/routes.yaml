@@ -8,6 +8,22 @@ api_login:
     path: /api/login
     controller: App\Controller\AuthController::login
 
+homePage_getAllPosts:
+    path: /homepage/getAllPosts
+    controller: App\Controller\HomePageController::getAllPosts
+homePage_addPost:
+    path: /homepage/addPost
+    controller: App\Controller\HomePageController::addPost
+homePage_addComment:
+    path: /homepage/addComment
+    controller: App\Controller\HomePageController::addComment
+homePage_getComments:
+    path: /homepage/getComments
+    controller: App\Controller\HomePageController::getComments
+homePage_getUser:
+    path: /homepage/getUser
+    controller: App\Controller\HomePageController::getUserInfo
+
 api_signup:
     path: /api/signup
     controller: App\Controller\AuthController::signup

@@ -3,7 +3,9 @@
     <h1>Test</h1>
   </div>
   <div>
-    {{ email }}
+    {{ email}}
+    {{ posts}}
+
   </div>
   <button @click="changeEmail">Send Email</button>
 </template>
@@ -13,7 +15,8 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      email: ''
+      email: '',
+      posts : ''
     }
   },
   methods: {
@@ -37,9 +40,22 @@ export default {
                 console.log(error)
               }
           )
-    }
+    },
+
+    fetchPosts() {
+         axios.get('http://127.0.0.1:8000/homepage/getAllPosts')
+           .then(response => {
+             this.posts = response.data
+             console.log('Posts', this.posts)
+           })
+           .catch(error => {
+             console.log(error)
+           })
+       }
+
   },
   mounted() {
+    this.fetchPosts()
     this.fetchEmail()
   }
 }
