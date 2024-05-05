@@ -33,4 +33,6 @@ api_isLoggedIn:
 api_logout:
     path: /api/logout
     controller: App\Controller\AuthController::logout
-
+api_cntactUs:
+    path: /api/contactUs
+    controller: App\Controller\ContactController::contactUs

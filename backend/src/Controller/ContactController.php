@@ -13,7 +13,7 @@ use App\Entity\Report;
 class ContactController extends AbstractController
 {
     #[Route('/contact', name: 'app_contact')]
-    public function index(Request $request, ManagerRegistry $doctrine,MailerService $mailer): JsonResponse
+    public function contactUs(Request $request, ManagerRegistry $doctrine,MailerService $mailer): JsonResponse
     {
         $email = $request->request->get('email');
         $fullName = $request->request->get('name');
