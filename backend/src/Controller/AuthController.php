@@ -2,9 +2,7 @@
 
 namespace App\Controller;
 
-use DateTime;
-use Exception;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Doctrine\Persistence\ObjectManager;
 use App\Service\MailerService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -126,9 +124,8 @@ class AuthController extends AbstractController
     }
 
     #[Route('/verificationProcess', name: 'verificationProcess', methods: ['POST'])]
-    public function verificationProcess(Request $request, ManagerRegistry $doctrine): JsonResponse
+    public function verificationProcess(Request $request, ObjectManager $manager): JsonResponse
     {
-        $entityManager = $doctrine->getManager();
         $user = new User();
         $code = $request->request->get('code');
         $verification = $request->request->get('verificationCode');
@@ -139,25 +136,17 @@ class AuthController extends AbstractController
         $username = $request->request->get('Username');
 
         $password = $request->request->get('Password');
-        $password = password_hash($password, PASSWORD_DEFAULT);
 
         $birthDate = $request->request->get('BirthDate');
-        try {
-            // Attempt to convert string to DateTime object
-            $birthDate = new DateTime($birthDate);
-        } catch (Exception $e) {
-            // Handle the exception
-            throw new BadRequestHttpException('Invalid birth date format', $e);
-        }
+
         $result = $code === $verification;
         if ($result) {
             $user->setFullName($fullName);
             $user->setEmail($email);
             $user->setUsername($username);
             $user->setPassword($password);
-            $user->setBirthDate($birthDate);
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $manager->persist($user);
+            $manager->flush();
             return $this->json(['success' => true, 'message' => 'Signed up successfully']);
         } else {
             return $this->json(['success' => false, 'message' => 'Verification code is incorrect']);
