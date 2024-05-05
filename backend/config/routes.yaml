@@ -21,3 +21,9 @@ homePage_addPost:
 homePage_addComment:
     path: /homepage/addComment
     controller: App\Controller\HomePageController::addComment
+homePage_getComments:
+    path: /homepage/getComments
+    controller: App\Controller\HomePageController::getComments
+homePage_getUser:
+    path: /homepage/getUser
+    controller: App\Controller\HomePageController::getUserInfo

@@ -97,7 +97,7 @@ import searchBar from '@/components/searchBar.vue';
                         name : user.fullName,
                         username: user.userName,
                         email: user.email,
-                        avatar: user.img? require(`../back/avatars/${user.img}`) : require(`../../public/img/noProfileImage.jpg`),
+                        avatar: user.img,//? require(`../back/avatars/${user.img}`) : require(`../../public/img/noProfileImage.jpg`),
                         bio: user.bio,
                     
                     };

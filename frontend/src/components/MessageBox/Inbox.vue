@@ -17,7 +17,6 @@
     </li>
   </ul>
 </template>
-<script></script>
 <script>
 import axios from "axios";
 import searchBar from '@/components/searchBar.vue';

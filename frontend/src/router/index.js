@@ -10,7 +10,7 @@ import Messages from '@/views/Messages.vue';
 import EditProfile from '@/views/EditProfile.vue';
 import Admin from '@/views/Admin.vue';
 import WelcomePage from '@/views/WelcomePage.vue';
-import UserAccount from '@/views/UserAccount.vue';
+//import UserAccount from '@/views/UserAccount.vue';
 import Test from '@/views/TestTest.vue';
 import axios from "axios";
 
@@ -29,9 +29,9 @@ const routes = [
     path: '/Home',
     name: 'Home',
     component: HomePage,
-    meta: {
+    /*meta: {
         requiresAuth: true
-    }
+    }*/
   },
   {
     path: '/',
@@ -51,9 +51,9 @@ const routes = [
     path: '/myAccount',
     name: 'MyAccountPage',
     component: MyAccountPage,
-    meta: {
+    /*meta: {
         requiresAuth: true
-    }
+    }*/
   },
   {
     path: '/login/passwordReset/:resetPasswordToken',
@@ -76,10 +76,10 @@ const routes = [
   {
     path: '/profile',
     name: 'profile',
-    component: UserAccount,
-    meta: {
+    component: MyAccountPage,
+    /*meta: {
         requiresAuth: true
-    }
+    }*/
   },
   {
     path: '/EditProfile',

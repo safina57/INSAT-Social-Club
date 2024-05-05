@@ -41,8 +41,17 @@ class HomePageController extends AbstractController
     #[Route('/getAllPosts', name: 'getAllPosts',methods: ['POST'])]
     public function getAllPosts(EntityManagerInterface $entityManager,Request $request): JsonResponse
     {
-        $posts = $entityManager->getRepository(Post::class)->findAll();
         $user = $entityManager->getRepository(User::class)->find($request->get('User_ID'));
+        if(!$request->get('UserPosts') ){
+            $posts = $entityManager->getRepository(Post::class)->findAll();
+        }else if($request->get('profileUser_ID')){
+            $profileUser = $entityManager->getRepository(User::class)->find($request->get('profileUser_ID'));
+            $posts = $entityManager->getRepository(Post::class)->findBy(['User'=>$profileUser]);
+        }else{
+            $posts = $entityManager->getRepository(Post::class)->findBy(['User'=>$user]);
+        }
+
+
         $posts = array_reverse($posts);
         $postsWithIsLiked = [];
         if (!$posts) {
@@ -174,5 +183,23 @@ class HomePageController extends AbstractController
 
             ]
         ]);
+    }
+    #[Route('/getComments', name: 'getComments',methods: ['POST'])]
+    public function getComments(EntityManagerInterface $entityManager,Request $request): JsonResponse
+    {
+        $post = $entityManager->getRepository(Post::class)->find($request->get('Post_ID'));
+        $comments = $entityManager->getRepository(Comment::class)->findBy(['Post'=>$post]);
+        $comments = array_reverse($comments);
+
+        return $this->json($comments);
+
+    }
+    #[Route('/getUser', name: 'getUser',methods: ['POST'])]
+    public function getUserInfo(EntityManagerInterface $entityManager,Request $request): JsonResponse
+    {
+        $user = $entityManager->getRepository(User::class)->find($request->get('User_ID'));
+
+        return $this->json($user);
+
     }
 }
