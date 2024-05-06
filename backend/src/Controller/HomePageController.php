@@ -235,4 +235,22 @@ class HomePageController extends AbstractController
         return $this->json(['success' => true, 'message' => 'Details fetched successfully', 'data' => $data]);
 
     }
+    #[Route('/deletePost', name: 'deletePost',methods: ['POST'])]
+    public function deletePost(EntityManagerInterface $entityManager,Request $request): JsonResponse
+    {
+        $post = $entityManager->getRepository(Post::class)->find($request->get('Post_ID'));
+        $comments = $entityManager->getRepository(Comment::class)->findBy(['Post'=>$post]);
+        foreach($comments as $comment){
+            $entityManager->remove($comment);
+        }
+        $reacts = $entityManager->getRepository(React::class)->findBy(['Post'=>$post]);
+        foreach($reacts as $react){
+            $entityManager->remove($react);
+        }
+        $entityManager->remove($post);
+        $entityManager->flush();
+
+        return $this->json(['success' => true, 'message' => 'Post deleted successfully']);
+
+    }
 }

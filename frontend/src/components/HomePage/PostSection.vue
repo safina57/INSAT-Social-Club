@@ -88,7 +88,8 @@ export default {
   methods: {
     deletePost(post) {
       let data = new FormData();
-      data.append('Post_ID', post.id);
+      data.append('Post_ID', post.Post_ID);
+      console.log('post deleted', post.Post_ID);
       axios.post(`http://127.0.0.1:8000/homepage/deletePost`, data)
           .then(response => {
             console.log("Post Deleted");
@@ -162,8 +163,11 @@ export default {
     share(post) {
       let data = new FormData();
       data.append('Post_ID', post.Post_ID);
-      //const sessionId = sessionStorage.getItem('sessionId');
-      data.append('user_id', 226);
+      console.log('share', post.Post_ID);
+      const sessionId = sessionStorage.getItem('sessionId');
+      if (sessionId !== null) {
+        data.append('sessionId', sessionId);
+      }
       axios.post(`http://127.0.0.1:8000/homepage/addPost`, data)
           .then(response => {
             this.$emit('postAdded', response);
