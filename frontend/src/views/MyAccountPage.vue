@@ -76,17 +76,14 @@ export default {
 
             };
           }
-/*
             const sessionId = sessionStorage.getItem('sessionId');
-*/
             let data =new FormData();
-            /*if (sessionId !== null) {
+            if (sessionId !== null) {
                 data.append('sessionId', sessionId);
-            }*/
+            }
             if(this.getParameterByName('User_ID')){
               data.append('profileUser_ID',this.getParameterByName('User_ID'));
             }
-            data.append('User_ID',226);
             data.append('UserPosts',true);
             axios.post(`http://127.0.0.1:8000/homepage/getAllPosts`,data)
             .then(response => {

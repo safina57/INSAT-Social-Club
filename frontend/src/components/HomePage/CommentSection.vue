@@ -51,11 +51,10 @@ export default {
       let data = new FormData();
       data.append('Content',content);
       data.append('Post_ID',post_id);
-      /*const sessionId = sessionStorage.getItem('sessionId');
+      const sessionId = sessionStorage.getItem('sessionId');
       if (sessionId !== null) {
         data.append('sessionId', sessionId);
-      }*/
-      data.append('User_ID',226);
+      }
 
       axios.post(`http://127.0.0.1:8000/homepage/addComment`, data)
           .then(response => {
