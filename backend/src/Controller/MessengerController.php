@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MessengerController extends AbstractController
 {
+
     public function getUsernameFromUserId(ManagerRegistry $doctrine, $user_id): string
     {
         $userRepository = $doctrine->getRepository(User::class);
@@ -25,6 +26,26 @@ class MessengerController extends AbstractController
         }
 
         return $user->getUsername();
+    }
+
+    #[Route('/api/all-users', name: 'api_all_users', methods: ['GET'])]
+    public function getAllUsers(ManagerRegistry $doctrine, Request $request): JsonResponse{
+        $userRepository = $doctrine->getRepository(User::class);
+        $session = $request->getSession();
+        $userId = $session->get('userId');
+        $username = $this->getUsernameFromUserId($doctrine, $userId);
+        // Fetch all users from the database except the current user and the admin
+        $queryBuilder = $userRepository->createQueryBuilder('u');
+        $email = 'insatsocialclubadm1n@gmail.com';
+        $allUsers = $queryBuilder->where($queryBuilder->expr()->andX(
+                $queryBuilder->expr()->neq('u.email', ':email'),
+                $queryBuilder->expr()->neq('u.username', ':username')
+            ))->setParameter('username', $username)
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getResult();
+
+        return new JsonResponse(['success' => true, 'users' => $allUsers]);
     }
 
     #[Route('/api/send-message', name: 'api_send_message', methods: ['POST'])]
@@ -63,7 +84,7 @@ class MessengerController extends AbstractController
         $session = $request->getSession();
 
         if (!$session->has('to_name')) {
-            return false; // No recipient specified
+            return new JsonResponse(['success' => false, 'message' => 'No recipient selected']);
         }
 
         // Get the recipient's name and the sender name
