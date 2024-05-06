@@ -3,63 +3,93 @@
 namespace App\Controller;
 
 use App\Entity\Chat;
-use App\Entity\User; // Add this line to import the User entity
+use App\Entity\User;
+use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request; // Add this line to import the Request class
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route; // Update this line to import Route annotation
+use Symfony\Component\Routing\Annotation\Route;
 
 class MessengerController extends AbstractController
 {
-
     public function getUsernameFromUserId(ManagerRegistry $doctrine, $user_id): string
     {
-        $repository = $doctrine->getRepository(User::class);
-        $user = $repository->find($user_id);
+        $userRepository = $doctrine->getRepository(User::class);
+        $user = $userRepository->find($user_id);
+
+        if (!$user) {
+            return ''; // Handle case where user is not found
+        }
+
         return $user->getUsername();
     }
 
-    public function sendMessage(ManagerRegistry $doctrine, Request $request, $message): bool
+    public function sendMessage(ManagerRegistry $doctrine, Request $request, string $message): bool
     {
-        //getting sender user id from session
         $session = $request->getSession();
-        $user_id = $session->get('userId');
 
-        //getting username from user id
-        $from_name = $this->getUsernameFromUserId($doctrine ,$user_id);
+        $userId = $session->get('userId');
+        $toName = $session->get('to_name');
 
-        //getting receiver name from session
-        $to_name = $session->get('to_name');
+        if (!$userId || !$toName || empty($message)) {
+            return false; // Validation failed
+        }
 
-        //saving message to database
-        if(!empty($message) && !empty($to_name)){
-            $entityManager = $doctrine->getManager();
-            $newMessage = new Chat();
-            $newMessage->setFromName($from_name);
-            $newMessage->setToName($to_name);
-            $newMessage->setMessage($message);
-            $newMessage->setDate(new \DateTime());
+        $fromName = $this->getUsernameFromUserId($doctrine, $userId);
+
+        $entityManager = $doctrine->getManager();
+        $newMessage = new Chat();
+        $newMessage->setFromName($fromName);
+        $newMessage->setToName($toName);
+        $newMessage->setMessage($message);
+        $newMessage->setDate(new DateTime());
+
+        try {
             $entityManager->persist($newMessage);
             $entityManager->flush();
-            return true;
-        }
-        else{
-            return false;
+            return true; // Message sent successfully
+        } catch (Exception $e) {
+            return false; // Error occurred while sending message
         }
     }
 
     public function fetchMessages(ManagerRegistry $doctrine, Request $request): array|bool
     {
         $session = $request->getSession();
-        if ($session->has('to_name')) {
-            $to_name = $session->get('to_name');
-            $user_id = $session->get('userId');
-            $from_name = $this->getUsernameFromUserId($doctrine, $user_id);
-            $repository = $doctrine->getRepository(Chat::class);
-            $messages = $repository->findBy(['fromName' => $from_name, 'toName' => $to_name], ['date' => 'ASC']);
-            return $messages;
+
+        if (!$session->has('to_name')) {
+            return false; // No recipient specified
         }
-        return false;
+
+        // Get the recipient's name and the sender name
+        $toName = $session->get('to_name');
+        $userId = $session->get('userId');
+        $fromName = $this->getUsernameFromUserId($doctrine, $userId);
+
+        // Fetch messages from the database
+        $chatRepository = $doctrine->getRepository(Chat::class);
+        $queryBuilder = $chatRepository->createQueryBuilder('c');
+
+        $messages = $queryBuilder->where(
+            $queryBuilder->expr()->orX(
+                $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq('c.fromName', ':fromName'),
+                    $queryBuilder->expr()->eq('c.toName', ':toName')
+                ),
+                $queryBuilder->expr()->andX(
+                    $queryBuilder->expr()->eq('c.fromName', ':toName'),
+                    $queryBuilder->expr()->eq('c.toName', ':fromName')
+                )
+            )
+        )
+            ->setParameters(['fromName' => $fromName, 'toName' => $toName])
+            ->orderBy('c.date', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return $messages;
     }
 
     #[Route('/messenger', name: 'app_messenger')]
