@@ -88,8 +88,8 @@ export default {
   methods: {
     deletePost(post) {
       let data = new FormData();
-      data.append('Post_ID', post.Post_ID);
-      axios.post(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=deletePost`, data)
+      data.append('Post_ID', post.id);
+      axios.post(`http://127.0.0.1:8000/homepage/deletePost`, data)
           .then(response => {
             console.log("Post Deleted");
             this.$emit('postDeleted', response);
@@ -140,11 +140,10 @@ export default {
       data.append('Content', content);
       data.append('Media', fileInput.files[0]);
       console.log('posting data');
-      /*const sessionId = sessionStorage.getItem('sessionId');
+      const sessionId = sessionStorage.getItem('sessionId');
       if (sessionId !== null) {
         data.append('sessionId', sessionId);
-      }*/
-      data.append('user_id', 226);
+      }
       axios.post(`http://127.0.0.1:8000/homepage/addPost`, data)
           .then(response => {
             console.log("Post Added");
@@ -175,9 +174,11 @@ export default {
     },  //Done
     react(post) {
       let data = new FormData();
-      //const currentUserID = sessionStorage.getItem('userId');
+      const sessionId = sessionStorage.getItem('sessionId');
+      if (sessionId !== null) {
+        data.append('sessionId', sessionId);
+      }
       data.append('Post_ID', post.Post_ID);
-      data.append('User_ID', 226);
       axios.post(`http://127.0.0.1:8000/homepage/addReact`, data)
           .then(response => {
             this.$emit('postAdded', response);

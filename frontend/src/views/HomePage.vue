@@ -61,14 +61,13 @@
                 }
 
 
-/*
+
             const sessionId = sessionStorage.getItem('sessionId');
-*/
+
             let data =new FormData();
-            /*if (sessionId !== null) {
+            if (sessionId !== null) {
                 data.append('sessionId', sessionId);
-            }*/
-            data.append('User_ID',226);
+            }
             axios.post(`http://127.0.0.1:8000/homepage/getAllPosts`,data)
             .then(response => {
                 let result = response.data;

@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+
+
 class PostDTO
 {
     private $post;
@@ -42,7 +44,13 @@ class HomePageController extends AbstractController
     #[Route('/getAllPosts', name: 'getAllPosts',methods: ['POST'])]
     public function getAllPosts(EntityManagerInterface $entityManager,Request $request): JsonResponse
     {
-        $user = $entityManager->getRepository(User::class)->find($request->get('User_ID'));
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+
+        $user = $entityManager->getRepository(User::class)->find($id);
         if(!$request->get('UserPosts') ){
             $posts = $entityManager->getRepository(Post::class)->findAll();
         }else if($request->get('profileUser_ID')){
@@ -81,8 +89,12 @@ class HomePageController extends AbstractController
     public function addPost(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $post = new Post();
-
-        $user = $entityManager->getRepository(User::class)->find($request->get('user_id'));
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+        $user = $entityManager->getRepository(User::class)->find($id);
         if(!$request->get('Post_ID')){
             $post->setCaption($request->get('Content'))
                 ->setReactCount(0)
@@ -122,8 +134,12 @@ class HomePageController extends AbstractController
     public function addReact(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $post = $entityManager->getRepository(Post::class)->find($request->get('Post_ID'));;
-
-        $user = $entityManager->getRepository(User::class)->find($request->get('User_ID'));
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+        $user = $entityManager->getRepository(User::class)->find($id);
         $react = $entityManager->getRepository(React::class)->findOneBy([
             'User'=>$user,
             'Post'=>$post
@@ -162,8 +178,12 @@ class HomePageController extends AbstractController
     public function addComment(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
         $comment = new Comment();
-
-        $user = $entityManager->getRepository(User::class)->find($request->get('User_ID'));
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+        $user = $entityManager->getRepository(User::class)->find($id);
         $post = $entityManager->getRepository(Post::class)->find($request->get('Post_ID'));
         $comment->setPost($post)
                 ->setUser($user)
