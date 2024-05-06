@@ -3,10 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Chat;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\User; // Add this line to import the User entity
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request; // Add this line to import the Request class
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route; // Update this line to import Route annotation
 
 class MessengerController extends AbstractController
 {
@@ -28,7 +29,6 @@ class MessengerController extends AbstractController
         $from_name = $this->getUsernameFromUserId($doctrine ,$user_id);
 
         //getting receiver name from session
-        $session = $request->getSession();
         $to_name = $session->get('to_name');
 
         //saving message to database
@@ -41,11 +41,11 @@ class MessengerController extends AbstractController
             $newMessage->setDate(new \DateTime());
             $entityManager->persist($newMessage);
             $entityManager->flush();
+            return true;
         }
         else{
             return false;
         }
-        return true;
     }
 
     public function fetchMessages(ManagerRegistry $doctrine, Request $request): array|bool
@@ -56,12 +56,11 @@ class MessengerController extends AbstractController
             $user_id = $session->get('userId');
             $from_name = $this->getUsernameFromUserId($doctrine, $user_id);
             $repository = $doctrine->getRepository(Chat::class);
-            $messages = $repository->findBy(['from_name' => $from_name, 'to_name' => $to_name], ['date' => 'ASC']);
+            $messages = $repository->findBy(['fromName' => $from_name, 'toName' => $to_name], ['date' => 'ASC']);
             return $messages;
         }
         return false;
     }
-
 
     #[Route('/messenger', name: 'app_messenger')]
     public function index(): Response
