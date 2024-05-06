@@ -8,6 +8,7 @@ use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,7 +27,8 @@ class MessengerController extends AbstractController
         return $user->getUsername();
     }
 
-    public function sendMessage(ManagerRegistry $doctrine, Request $request, string $message): bool
+    #[Route('/api/send-message', name: 'api_send_message', methods: ['POST'])]
+    public function sendMessage(ManagerRegistry $doctrine, Request $request, string $message): JsonResponse
     {
         $session = $request->getSession();
 
@@ -34,7 +36,7 @@ class MessengerController extends AbstractController
         $toName = $session->get('to_name');
 
         if (!$userId || !$toName || empty($message)) {
-            return false; // Validation failed
+            return new JsonResponse(['success' => false, 'message' => 'Error occurred while sending message']);
         }
 
         $fromName = $this->getUsernameFromUserId($doctrine, $userId);
@@ -49,13 +51,14 @@ class MessengerController extends AbstractController
         try {
             $entityManager->persist($newMessage);
             $entityManager->flush();
-            return true; // Message sent successfully
+            return new JsonResponse(['success' => true, 'message' => 'Message sent successfully']);
         } catch (Exception $e) {
-            return false; // Error occurred while sending message
+            return new JsonResponse(['success' => false, 'message' => 'Error occurred while sending message']);
         }
     }
 
-    public function fetchMessages(ManagerRegistry $doctrine, Request $request): array|bool
+    #[Route('/api/fetch-messages', name: 'api_fetch_messages', methods: ['GET'])]
+    public function fetchMessages(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
         $session = $request->getSession();
 
@@ -89,7 +92,7 @@ class MessengerController extends AbstractController
             ->getQuery()
             ->getResult();
 
-        return $messages;
+        return new JsonResponse(['success' => true, 'messages' => $messages]);
     }
 
     #[Route('/messenger', name: 'app_messenger')]
