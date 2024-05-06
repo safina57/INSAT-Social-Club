@@ -53,7 +53,7 @@ export default {
 
                         userID: user.userID,
                         username: user.username,
-                        avatar: user.img,//? require(`../../back/avatars/${user.img}`) : require(`../../../public/img/noProfileImage.jpg`),
+                        avatar: user.img? require(`../../../../backend/avatars/${user.img}`) : require(`../../../public/img/noProfileImage.jpg`),
                         userStatus: user.userStatus
 
                     };
@@ -64,6 +64,7 @@ export default {
       axios.post('http://127.0.0.1:8000/api/all-users', data)
           .then(response => {
             let result = response.data;
+            console.log(result);
             result = result.map(user=>transformUserData(user));
             this.users = result;
             this.$emit('users-fetched', response.data);

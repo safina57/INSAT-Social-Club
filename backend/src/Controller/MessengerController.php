@@ -42,8 +42,8 @@ class MessengerController extends AbstractController
             ->setParameter('email', $email)
             ->getQuery()
             ->getResult();
-
-        return new JsonResponse(['success' => true, 'users' => $allUsers]);
+        return $this->json($allUsers);
+        //return new JsonResponse(['success' => true, 'users' => $allUsers]);
     }
 
     #[Route('/api/send-message', name: 'api_send_message', methods: ['POST'])]
