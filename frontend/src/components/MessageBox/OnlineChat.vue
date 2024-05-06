@@ -48,7 +48,7 @@ export default {
       let sessionId = sessionStorage.getItem('sessionId');
       data.append('sessionId', sessionId);
       data.append('userName', this.selectedUser.username);
-      axios.post('http://localhost/php/Social-Media-Clone/src/back/messengerApi.php?action=displayMessages', data)
+      axios.post('http://127.0.0.1:8000/api/fetch-messages', data)
           .then(response => {
             if(response.data.success){
               this.messages = response.data.messages;
@@ -73,7 +73,7 @@ export default {
       let sessionId = sessionStorage.getItem('sessionId');
       data.append('sessionId', sessionId);
       data.append('message', this.newMessage);
-      axios.post('http://localhost/php/Social-Media-Clone/src/back/messengerApi.php?action=sendMessage', data)
+      axios.post('http://127.0.0.1:8000/api/send-message', data)
           .then(response => {
             if (response.data.success) {
               this.isScrolledDown = true;
@@ -138,7 +138,7 @@ export default {
     let data = new FormData();
     let sessionId = sessionStorage.getItem('sessionId');
     data.append('sessionId', sessionId);
-    axios.post('http://localhost/php/Social-Media-Clone/src/back/messengerApi.php?action=getCurrentUserName', data)
+    axios.post('http://127.0.0.1:8000/api/fetch-messages', data)
     .then(response => {
       if (response.data.success) {
         this.currentUser = response.data.username;

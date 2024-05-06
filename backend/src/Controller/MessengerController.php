@@ -16,22 +16,20 @@ use Symfony\Component\Routing\Annotation\Route;
 class MessengerController extends AbstractController
 {
 
-    public function getUsernameFromUserId(ManagerRegistry $doctrine, $user_id): string
+    private function getUsernameFromUserId(ManagerRegistry $doctrine, $user_id): string
     {
         $userRepository = $doctrine->getRepository(User::class);
         $user = $userRepository->find($user_id);
-
-        if (!$user) {
-            return ''; // Handle case where user is not found
-        }
-
         return $user->getUsername();
     }
 
-    #[Route('/api/all-users', name: 'api_all_users', methods: ['GET'])]
+    #[Route('/api/all-users', name: 'api_all_users', methods: ['POST'])]
     public function getAllUsers(ManagerRegistry $doctrine, Request $request): JsonResponse{
         $userRepository = $doctrine->getRepository(User::class);
+        $sessionId = $request->request->get('sessionId');
         $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
         $userId = $session->get('userId');
         $username = $this->getUsernameFromUserId($doctrine, $userId);
         // Fetch all users from the database except the current user and the admin
@@ -51,7 +49,10 @@ class MessengerController extends AbstractController
     #[Route('/api/send-message', name: 'api_send_message', methods: ['POST'])]
     public function sendMessage(ManagerRegistry $doctrine, Request $request, string $message): JsonResponse
     {
+        $sessionId = $request->request->get('sessionId');
         $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
 
         $userId = $session->get('userId');
         $toName = $session->get('to_name');
@@ -78,10 +79,13 @@ class MessengerController extends AbstractController
         }
     }
 
-    #[Route('/api/fetch-messages', name: 'api_fetch_messages', methods: ['GET'])]
+    #[Route('/api/fetch-messages', name: 'api_fetch_messages', methods: ['POST'])]
     public function fetchMessages(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
+        $sessionId = $request->request->get('sessionId');
         $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
 
         if (!$session->has('to_name')) {
             return new JsonResponse(['success' => false, 'message' => 'No recipient selected']);
@@ -108,19 +112,12 @@ class MessengerController extends AbstractController
                 )
             )
         )
-            ->setParameters(['fromName' => $fromName, 'toName' => $toName])
+            ->setParameter('fromName', $fromName)
+            ->setParameter('toName',$toName)
             ->orderBy('c.date', 'ASC')
             ->getQuery()
             ->getResult();
 
         return new JsonResponse(['success' => true, 'messages' => $messages]);
-    }
-
-    #[Route('/messenger', name: 'app_messenger')]
-    public function index(): Response
-    {
-        return $this->render('messenger/index.html.twig', [
-            'controller_name' => 'MessengerController',
-        ]);
     }
 }

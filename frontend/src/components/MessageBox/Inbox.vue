@@ -61,7 +61,7 @@ export default {
       const sessionId = sessionStorage.getItem('sessionId');
       let data = new FormData();
       data.append('sessionId', sessionId);
-      axios.post('http://localhost/php/Social-Media-Clone/src/back/messengerApi.php?action=getUsers', data)
+      axios.post('http://127.0.0.1:8000/api/all-users', data)
           .then(response => {
             let result = response.data;
             result = result.map(user=>transformUserData(user));
