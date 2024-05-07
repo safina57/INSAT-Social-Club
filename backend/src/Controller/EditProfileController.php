@@ -84,10 +84,10 @@ class EditProfileController extends AbstractController
         $user = $repository->findOneBy(['id' => $id]);
 
         $data = [];
-        $data['fullName'] = $user->getFullName();
         $data['username'] = $user->getUsername();
         $data['email'] = $user->getEmail();
         $data['img'] = $user->getImage();
+        $data['bio'] = $user->getBio();
 
         if ($data){
             return $this->json(['success' => true, 'message' => 'Details fetched successfully', 'data' => $data]);
