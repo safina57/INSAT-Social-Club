@@ -89,3 +89,9 @@ api_UploadAvatar:
     path: /api/UploadAvatar
     controller: App\Controller\EditProfileController::UploadAvatar
 
+api_fetchAvatar:
+    path: /api/fetchAvatar
+    controller: App\Controller\EditProfileController::fetchAvatar
+homePage_deletePost:
+    path: /homepage/deletePost
+    controller: App\Controller\HomePageController::deletePost

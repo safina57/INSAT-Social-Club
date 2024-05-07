@@ -4,8 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b70926b5b64924997f1a732050d24ab",
-
+    "content-hash": "7b28ac2668abd0effec46e303797d001",
     "packages": [
         {
             "name": "async-aws/core",
@@ -1500,7 +1499,6 @@
             "time": "2023-10-06T06:47:41+00:00"
         },
         {
-
             "name": "fzaninotto/faker",
             "version": "v1.5.0",
             "source": {
@@ -1530,7 +1528,6 @@
                     "dev-master": "1.5.x-dev"
                 }
             },
-
             "autoload": {
                 "psr-4": {
                     "Faker\\": "src/Faker/"
@@ -1557,7 +1554,6 @@
             },
             "abandoned": true,
             "time": "2015-05-29T06:29:14+00:00"
-
         },
         {
             "name": "monolog/monolog",

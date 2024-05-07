@@ -388,7 +388,9 @@ class AuthController extends AbstractController
                 $entityManager->flush();
             }
             $response = new JsonResponse(['success' => true, 'message' => 'Logged out successfully']);
-            $response->headers->clearCookie('rememberMe');
+            $expiry = time() - 3600;
+            $cookie=new Cookie('rememberMe', '', $expiry,'/',null,true,true,true,'None');
+            $response->headers->setCookie($cookie);
             return $response;
         }
         return $this->json(['success' => true, 'message' => 'Logged out successfully']);

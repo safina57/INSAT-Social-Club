@@ -76,17 +76,14 @@ export default {
 
             };
           }
-/*
             const sessionId = sessionStorage.getItem('sessionId');
-*/
             let data =new FormData();
-            /*if (sessionId !== null) {
+            if (sessionId !== null) {
                 data.append('sessionId', sessionId);
-            }*/
+            }
             if(this.getParameterByName('User_ID')){
               data.append('profileUser_ID',this.getParameterByName('User_ID'));
             }
-            data.append('User_ID',226);
             data.append('UserPosts',true);
             axios.post(`http://127.0.0.1:8000/homepage/getAllPosts`,data)
             .then(response => {
@@ -107,7 +104,7 @@ export default {
                         name : user.fullname,
                         username: user.username,
                         email: user.email,
-                        avatar: user.image? false/*require(`../back/avatars/${user.img}`) */: require(`../../public/img/noProfileImage.jpg`),
+                        avatar: user.img? require(`../../../backend/avatars/${user.img}`) : require(`../../public/img/noProfileImage.jpg`),
                         background: user.background? user.background : 'https://wweb.dev/resources/navigation-generator/logo-placeholder-background.png',
                         bio: user.bio,
 
@@ -115,22 +112,17 @@ export default {
                 }
 
                 let data =new FormData();
-
-                if(window.location.pathname ==='/myAccount' ){
-                  data.append('User_ID',226);
-                  /*const sessionId = sessionStorage.getItem('sessionId');
-                  if (sessionId !== null) {
+                let sessionId = sessionStorage.getItem('sessionId');
+                if (sessionId !== null) {
                     data.append('sessionId', sessionId);
-                  }*/
-                }else{
-                  data.append('User_ID',this.getParameterByName('User_ID'));
                 }
                 axios.post(`http://127.0.0.1:8000/homepage/getUser`,data)
                 .then(response => {
-
-                    let result = response.data;
+                  if(response.data.success){
+                    let result = response.data.data;
                     result = transformUserData(result);
                     this.user = result;
+                  }
                 })
                 .catch(error => {
                     console.error('Error fetching User info:', error);

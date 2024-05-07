@@ -84,10 +84,10 @@ class EditProfileController extends AbstractController
         $user = $repository->findOneBy(['id' => $id]);
 
         $data = [];
-        $data['fullName'] = $user->getFullName();
         $data['username'] = $user->getUsername();
         $data['email'] = $user->getEmail();
         $data['img'] = $user->getImage();
+        $data['bio'] = $user->getBio();
 
         if ($data){
             return $this->json(['success' => true, 'message' => 'Details fetched successfully', 'data' => $data]);
@@ -121,6 +121,29 @@ class EditProfileController extends AbstractController
         $entityManager->flush();
 
         return $this->json(['success' => true, 'message' => 'Avatar uploaded successfully', 'path' => $avatar->getClientOriginalName()]);
+    }
+
+    #[Route('/fetchAvatar', name: 'fetchAvatar', methods: ['POST'])]
+    public function fetchAvatar(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $repository = $doctrine->getRepository(User::class);
+
+        $repository = $doctrine->getRepository(User::class);
+
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+        $user = $repository->findOneBy(['id' => $id]);
+
+        $path = $user->getImage();
+
+        if ($path){
+            return $this->json(['success' => true, 'message' => 'Avatar fetched successfully', 'path' => $path]);
+        }
+        return $this->json(['success' => false, 'message' => 'Failed to fetch avatar']);
+
     }
 
     private function verifyPassword($user, $id, $oldPassword) : bool

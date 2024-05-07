@@ -13,6 +13,7 @@
   import userSection from '@/components/Admin/user-section.vue'
   import reports from '@/components/Admin/reports.vue'
   import posts from '@/components/Admin/posts.vue'
+  import axios from 'axios'
 
   export default {
     components: {
@@ -83,24 +84,24 @@
       onToggleCollapse(collapsed) {
         this.isSidebarCollapsed = collapsed;
       },
-        // logout() {
-        //     const sessionID = sessionStorage.getItem('sessionId');
-        //     let data =new FormData();
-        //     data.append('sessionID', sessionID);
-        //     axios.defaults.withCredentials = true;
-        //     axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=logout`,data)
-        //     .then(response => {
-        //     console.log(response.data.message);
-        //     if(response.data.success) {
-        //         sessionStorage.removeItem('sessionId');
-        //         sessionStorage.removeItem('userId');
-        //         this.$router.push('/login');
-        //     }
-        //     })
-        //     .catch(error => {
-        //     console.log(error);
-        //     });
-        // }
+      logout() {
+             const sessionID = sessionStorage.getItem('sessionId');
+             let data =new FormData();
+             data.append('sessionID', sessionID);
+             axios.defaults.withCredentials = true;
+             axios.post(`http://127.0.0.1:8000/api/logout`,data)
+             .then(response => {
+             console.log(response.data.message);
+             if(response.data.success) {
+                 sessionStorage.removeItem('sessionId');
+                 sessionStorage.removeItem('userId');
+                  this.$router.push('/login');
+             }
+             })
+             .catch(error => {
+             console.log(error);
+             });
+         }
     }
   }
   </script>
