@@ -100,7 +100,9 @@ class HomePageController extends AbstractController
                 ->setReactCount(0)
                 ->setUser($user);
             if(!$request->get('Media')){
-                $post->setMedia($request->get('Media'));
+                $media = $request->files->get('Media');
+                $media->move($this->getParameter('upload_directory_post'), $media->getClientOriginalName());
+                $post->setMedia($media->getClientOriginalName());
             }
         }else{
             $oldPost = $entityManager->getRepository(Post::class)->find($request->get('Post_ID'));
@@ -239,6 +241,13 @@ class HomePageController extends AbstractController
     public function deletePost(EntityManagerInterface $entityManager,Request $request): JsonResponse
     {
         $post = $entityManager->getRepository(Post::class)->find($request->get('Post_ID'));
+        $media = $post->getMedia();
+        //check how many times the media is used
+        $numOfMediaUsed = $entityManager->getRepository(Post::class)->findBy(['media'=>$media]);
+        $mediaUsedMoreThanOnce = count($numOfMediaUsed) > 1;
+        if ($media && !$mediaUsedMoreThanOnce) {
+            unlink($this->getParameter('upload_directory_post') . '/' . $media);
+        }
         $comments = $entityManager->getRepository(Comment::class)->findBy(['Post'=>$post]);
         foreach($comments as $comment){
             $entityManager->remove($comment);

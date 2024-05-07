@@ -48,7 +48,7 @@
                             alt: 'User Image'
                         },
                         content: post.post.caption,
-                        img: post.post.media ?/*require('../back/uploads/' + post.Media)*/ false : "",
+                        img: post.post.media ?require('../../../backend/media/' + post.post.media) : "",
                         alt: 'Post Image',
                         commentsShown: false,
                         newCommentContent: '',
@@ -71,11 +71,8 @@
             axios.post(`http://127.0.0.1:8000/homepage/getAllPosts`,data)
             .then(response => {
                 let result = response.data;
-              console.log('posts before',result);
                 result = result.map(post=>transformPost(post));
                 this.Posts = result;
-              console.log('posts',this.Posts);
-
             })
             .catch(error => {
                 console.error('Error fetching posts:', error);
