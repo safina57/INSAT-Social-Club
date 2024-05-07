@@ -211,6 +211,7 @@ class AuthController extends AbstractController
         $password = $request->request->get('Password');
         $rememberMe = $request->request->get('rememberMe');
         $user = $repository->findOneBy(['username' => $username]);
+        $isAdmin = false;
         if ($user) {
             if (password_verify($password, $user->getPassword())) {
                 $session = $request->getSession();
@@ -218,6 +219,9 @@ class AuthController extends AbstractController
                 $sessionId=$request->getSession()->getId();
                 $session->set('userId', $user->getId());
                 $session->set('loggedIn', true);
+                if($user->getEmail()=='insatsocialclubadm1n@gmail.com') {
+                    $isAdmin = true;
+                }
                 $flag=$rememberMe==='true';
                 if($flag) {
                     $token = $this->generateToken();
@@ -226,12 +230,12 @@ class AuthController extends AbstractController
                     $data = ['username' => $username];
                     $entityManager = $manager->getManager();
                     $repository->addToken($data, $token, $entityManager);
-                    $response = new JsonResponse(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(),'token'=>$token]);
+                    $response = new JsonResponse(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
                     $response->headers->setCookie($cookie);
                     return $response;
                 }
                 else{
-                    return $this->json(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId()]);
+                    return $this->json(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
                     }
             }
             else{
@@ -362,10 +366,14 @@ class AuthController extends AbstractController
             $token = $request->cookies->get('rememberMe');
             $repository = $doctrine->getRepository(User::class);
             $user = $repository->findOneBy(['rememberMeToken' => $token]);
+            $isAdmin = false;
             if ($user) {
                 $session->set('userId', $user->getId());
                 $session->set('loggedIn', true);
-                return $this->json(['success' => true, 'message' => 'User is logged in', 'sessionID' => $sessionId, 'userId' => $user->getId()]);
+                if($user->getEmail()=='insatsocialclubadm1n@gmail.com') {
+                    $isAdmin = true;
+                }
+                return $this->json(['success' => true, 'message' => 'User is logged in', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
             }
         }
         return $this->json(['success' => false, 'message' => 'User is not logged in']);

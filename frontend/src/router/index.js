@@ -131,11 +131,12 @@ router.beforeEach((to, from, next) => {
             //setUserOnline();
             sessionStorage.setItem('sessionId', response.data.sessionID);
             sessionStorage.setItem('userId', response.data.userId);
-            /*if(to.meta.isAdmin && !response.data.isAdmin){
+            if(response.data.isAdmin){
+                sessionStorage.setItem('isAdmin', response.data.isAdmin);
+            }
+            if(to.meta.isAdmin && sessionStorage.getItem('isAdmin') !== 'true'){
                 next('/Home');
             }
-
-             */
             next();
           }
         })

@@ -95,6 +95,7 @@
              if(response.data.success) {
                  sessionStorage.removeItem('sessionId');
                  sessionStorage.removeItem('userId');
+                  sessionStorage.removeItem('isAdmin');
                   this.$router.push('/login');
              }
              })
