@@ -58,7 +58,7 @@ export default {
               });
               this.isScrolledDown = false;
               }
-              
+
             }
             else{
               this.messages = [];
@@ -68,6 +68,7 @@ export default {
             console.error('Error fetching messages:', error);
           });
     },
+
     sendMessage() {
       let data = new FormData();
       let sessionId = sessionStorage.getItem('sessionId');
@@ -142,13 +143,13 @@ export default {
     .then(response => {
       if (response.data.success) {
         this.currentUser = response.data.username;
-        
+
       }
     })
     .catch(error => {
       console.error('Error sending message:', error);
     });
-    
+
   },
   beforeUnmount() {
     clearInterval(this.fetchInterval);

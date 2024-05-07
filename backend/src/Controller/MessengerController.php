@@ -47,7 +47,7 @@ class MessengerController extends AbstractController
     }
 
     #[Route('/api/send-message', name: 'api_send_message', methods: ['POST'])]
-    public function sendMessage(ManagerRegistry $doctrine, Request $request, string $message): JsonResponse
+    public function sendMessage(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
         $sessionId = $request->request->get('sessionId');
         $session = $request->getSession();
@@ -56,6 +56,7 @@ class MessengerController extends AbstractController
 
         $userId = $session->get('userId');
         $toName = $session->get('to_name');
+        $message = $request->getContent();
 
         if (!$userId || !$toName || empty($message)) {
             return new JsonResponse(['success' => false, 'message' => 'Error occurred while sending message']);
@@ -91,7 +92,7 @@ class MessengerController extends AbstractController
             return new JsonResponse(['success' => false, 'message' => 'No recipient selected']);
         }
 
-        // Get the recipient's name and the sender name
+        // Get the recipient's name from the session
         $toName = $session->get('to_name');
         $userId = $session->get('userId');
         $fromName = $this->getUsernameFromUserId($doctrine, $userId);
@@ -113,11 +114,12 @@ class MessengerController extends AbstractController
             )
         )
             ->setParameter('fromName', $fromName)
-            ->setParameter('toName',$toName)
+            ->setParameter('toName', $toName)
             ->orderBy('c.date', 'ASC')
             ->getQuery()
             ->getResult();
 
         return new JsonResponse(['success' => true, 'messages' => $messages]);
     }
+
 }
