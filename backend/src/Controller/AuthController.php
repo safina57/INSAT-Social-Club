@@ -22,7 +22,7 @@ class AuthController extends AbstractController
         $repository = $doctrine->getRepository(User::class);
         $email = $request->request->get('Email');
         $username = $request->request->get('Username');
-        $existingUser =  $repository->findOneBy(['email' => $email, 'username' => $username]);
+        $existingUser =  $repository->userExist($username, $email);
         if (!$existingUser) {
             return $this->json(['success' => true, 'message' => 'Username and Email are available']);
         } else {
