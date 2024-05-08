@@ -29,11 +29,209 @@ class AuthController extends AbstractController
             return $this->json(['success' => false, 'message' => 'Username or Email already exists']);
         }
     }
+
     #[Route('/verify', name: 'verify', methods: ['POST'])]
     public function verify(Request $request, MailerService $mailer): JsonResponse
     {
         $email = $request->request->get('Email');
         $verificationCode = $this->generateVerificationCode();
+
+        $sent = $this->verifyEmail($email, $verificationCode, $mailer);
+        if ($sent) {
+            return $this->json(['success' => true, 'message' => 'Verification code sent to your email', 'code' => $verificationCode]);
+        } else {
+            return $this->json(['success' => false, 'message' => 'Failed to send verification code']);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    #[Route('/verificationProcess', name: 'verificationProcess', methods: ['POST'])]
+    public function verificationProcess(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $code = $request->request->get('code');
+        $verification = $request->request->get('verificationCode');
+        $fullName = $request->request->get('FullName');
+        $email = $request->request->get('Email');
+        $username = $request->request->get('Username');
+        $password = $request->request->get('Password');
+        $password = password_hash($password, PASSWORD_DEFAULT);
+
+        $birthDateString = $request->request->get('BirthDate');
+        $birthDate = new DateTime($birthDateString);
+
+        $result = $code === $verification;
+        if ($result) {
+            $user = new User();
+            $entityManager = $doctrine->getManager();
+            $user->setFullName($fullName);
+            $user->setEmail($email);
+            $user->setUsername($username);
+            $user->setPassword($password);
+            $user->setBirthDate($birthDate);
+            $entityManager->persist($user);
+            $entityManager->flush();
+            return $this->json(['success' => true, 'message' => 'Signed up successfully']);
+        } else {
+            return $this->json(['success' => false, 'message' => 'Verification code is incorrect']);
+        }
+    }
+
+    #[Route('/resetPasswordRequest', name: 'resetPasswordRequest', methods: ['POST'])]
+    public function resetPasswordRequest(Request $request,ManagerRegistry $doctrine, MailerService $mailer): JsonResponse
+    {
+        $email = $request->request->get('email');
+        $repository = $doctrine->getRepository(User::class);
+        $exist = $repository->findOneBy(['email' => $email]);
+        if ($exist) {
+            $token = $this->generateToken();
+            $data = ['email' => $email];
+            $entityManager = $doctrine->getManager();
+            $result = $repository->addToken($data, $token, $entityManager);
+            if ($result) {
+                $URL = "http://localhost:8080/login/passwordReset/" . $token;
+                $result = $this->passwordResetEmail($email, $URL, $mailer);
+                if ($result) {
+                    return $this->json(['success' => true, 'message' => 'Password reset link sent to your email']);
+                } else {
+                    return $this->json(['success' => false, 'message' => 'Failed to send password reset link']);
+                }
+            } else {
+                return $this->json(['success' => false, 'message' => 'Failed to add token']);
+            }
+        } else {
+            return $this->json(['success' => false, 'message' => 'Email does not exist']);
+        }
+    }
+
+    #[Route('/resetPassword', name: 'resetPassword', methods: ['POST'])]
+    public function passwordReset(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $token = $request->request->get('resetPasswordToken');
+        $password = $request->request->get('password');
+
+        $repository = $doctrine->getRepository(User::class);
+        $user = $repository->findOneBy(['resetPasswordToken' => $token]);
+        if ($user) {
+            $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
+            $user->setResetPasswordToken(null);
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+            return $this->json(['success' => true, 'message' => 'Password reset successfully']);
+        } else {
+            return $this->json(['success' => false, 'message' => 'Invalid token']);
+        }
+    }
+
+    #[Route('/login', name: 'login')]
+    public function login(Request $request , ManagerRegistry $manager ): JsonResponse
+    {
+        $repository = $manager->getRepository(User::class);
+        $username = $request->request->get('Username');
+        $password = $request->request->get('Password');
+        $rememberMe = $request->request->get('rememberMe');
+        $user = $repository->findOneBy(['username' => $username]);
+        $isAdmin = false;
+        if ($user) {
+            if (password_verify($password, $user->getPassword())) {
+                $session = $request->getSession();
+                $session->start();
+                $sessionId=$request->getSession()->getId();
+                $session->set('userId', $user->getId());
+                $session->set('loggedIn', true);
+                if($user->getEmail()=='insatsocialclubadm1n@gmail.com') {
+                    $isAdmin = true;
+                }
+                $flag=$rememberMe==='true';
+                if($flag) {
+                    $token = $this->generateToken();
+                    $expiry = time() + (60*60*24);
+                    $cookie=new Cookie('rememberMe', $token, $expiry,'/',null,true,true,true,'None');
+                    $data = ['username' => $username];
+                    $entityManager = $manager->getManager();
+                    $repository->addToken($data, $token, $entityManager);
+                    $response = new JsonResponse(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
+                    $response->headers->setCookie($cookie);
+                    return $response;
+                }
+                else{
+                    return $this->json(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
+                    }
+            }
+            else{
+                return $this->json(['success' => false, 'message' => 'Incorrect username or password']);
+            }
+        }
+        return $this->json(['success' => false, 'message' => 'Incorrect username or password']);
+    }
+
+    #[Route('/isLoggedIn', name: 'isLoggedIn', methods: ['POST'])]
+    public function isLoggedIn(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        if ($sessionId) {
+            $session->setId($sessionId);
+            $session->start();
+        }
+        else {
+            $session->start();
+            $sessionId=$session->getId();
+        }
+        $result = $session->get('loggedIn');
+        if ($result) {
+            return $this->json(['success' => true, 'message' => 'User is logged in', 'sessionID' => $sessionId, 'userId' => $session->get('userId')]);
+        }
+        //check for remember me
+        $result = $request->cookies->get('rememberMe');
+        if ($result) {
+            $token = $request->cookies->get('rememberMe');
+            $repository = $doctrine->getRepository(User::class);
+            $user = $repository->findOneBy(['rememberMeToken' => $token]);
+            $isAdmin = false;
+            if ($user) {
+                $session->set('userId', $user->getId());
+                $session->set('loggedIn', true);
+                if($user->getEmail()=='insatsocialclubadm1n@gmail.com') {
+                    $isAdmin = true;
+                }
+                return $this->json(['success' => true, 'message' => 'User is logged in', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
+            }
+        }
+        return $this->json(['success' => false, 'message' => 'User is not logged in']);
+    }
+
+    #[Route('/logout', name: 'logout', methods: ['POST'])]
+    public function logout(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $session = $request->getSession();
+        $session->invalidate();
+        $token = $request->cookies->get('rememberMe');
+        $repository = $doctrine->getRepository(User::class);
+        $userId = $request->request->get('userID');
+        $user = $repository->findOneBy(['id' => $userId]);
+
+        $user->setStatus('Offline');
+        $user->setRememberMeToken(null);
+
+        $entityManager = $doctrine->getManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        if ($token) {
+            $response = new JsonResponse(['success' => true, 'message' => 'Logged out successfully']);
+            $expiry = time() - 3600;
+            $cookie=new Cookie('rememberMe', '', $expiry,'/',null,true,true,true,'None');
+            $response->headers->setCookie($cookie);
+            return $response;
+        }
+        return $this->json(['success' => true, 'message' => 'Logged out successfully']);
+    }
+
+    private function verifyEmail($email,$verificationCode, $mailer): bool
+    {
         $subject = "Verification";
         $body = "
     <html>
@@ -101,159 +299,9 @@ class AuthController extends AbstractController
     </body>
     </html>
 ";
-        $sent = $mailer->sendEmail($email, $subject, $body);
-        if ($sent) {
-            return $this->json(['success' => true, 'message' => 'Verification code sent to your email', 'code' => $verificationCode]);
-        } else {
-            return $this->json(['success' => false, 'message' => 'Failed to send verification code']);
-        }
+        return $mailer->sendEmail($email, $subject, $body);
     }
 
-    /**
-     * @throws Exception
-     */
-    #[Route('/verificationProcess', name: 'verificationProcess', methods: ['POST'])]
-    public function verificationProcess(Request $request, ManagerRegistry $doctrine): JsonResponse
-    {
-        $code = $request->request->get('code');
-        $verification = $request->request->get('verificationCode');
-        $fullName = $request->request->get('FullName');
-
-        $email = $request->request->get('Email');
-
-        $username = $request->request->get('Username');
-
-        $password = $request->request->get('Password');
-        $password = password_hash($password, PASSWORD_DEFAULT);
-
-        $birthDateString = $request->request->get('BirthDate');
-        $birthDate = new DateTime($birthDateString);
-
-        $result = $code === $verification;
-        if ($result) {
-            $user = new User();
-            $entityManager = $doctrine->getManager();
-            $user->setFullName($fullName);
-            $user->setEmail($email);
-            $user->setUsername($username);
-            $user->setPassword($password);
-            $user->setBirthDate($birthDate);
-            $entityManager->persist($user);
-            $entityManager->flush();
-            return $this->json(['success' => true, 'message' => 'Signed up successfully']);
-        } else {
-            return $this->json(['success' => false, 'message' => 'Verification code is incorrect']);
-        }
-    }
-    #[Route('/resetPasswordRequest', name: 'resetPasswordRequest', methods: ['POST'])]
-    public function resetPasswordRequest(Request $request,ManagerRegistry $doctrine, MailerService $mailer): JsonResponse
-    {
-        $email = $request->request->get('email');
-        $repository = $doctrine->getRepository(User::class);
-        $exist = $repository->findOneBy(['email' => $email]);
-        if ($exist) {
-            $token = $this->generateToken();
-            $data = ['email' => $email];
-            $entityManager = $doctrine->getManager();
-            $result = $repository->addToken($data, $token, $entityManager);
-            if ($result) {
-                $URL = "http://localhost:8080/login/passwordReset/" . $token;
-                $result = $this->passwordResetEmail($email, $URL, $mailer);
-                if ($result) {
-                    return $this->json(['success' => true, 'message' => 'Password reset link sent to your email']);
-                } else {
-                    return $this->json(['success' => false, 'message' => 'Failed to send password reset link']);
-                }
-            } else {
-                return $this->json(['success' => false, 'message' => 'Failed to add token']);
-            }
-        } else {
-            return $this->json(['success' => false, 'message' => 'Email does not exist']);
-        }
-    }
-
-    #[Route('/resetPassword', name: 'resetPassword', methods: ['POST'])]
-    public function passwordReset(Request $request, ManagerRegistry $doctrine): JsonResponse
-    {
-        $token = $request->request->get('resetPasswordToken');
-        $password = $request->request->get('password');
-
-        $repository = $doctrine->getRepository(User::class);
-        $user = $repository->findOneBy(['resetPasswordToken' => $token]);
-        if ($user) {
-            $user->setPassword(password_hash($password, PASSWORD_DEFAULT));
-            $user->setResetPasswordToken(null);
-            $entityManager = $doctrine->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-            return $this->json(['success' => true, 'message' => 'Password reset successfully']);
-        } else {
-            return $this->json(['success' => false, 'message' => 'Invalid token']);
-        }
-    }
-
-
-    private function generateVerificationCode(): string
-    {
-        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $verificationCode = '';
-        $length = strlen($characters);
-        for ($i = 0; $i < 6; $i++) {
-            $verificationCode .= $characters[rand(0, $length - 1)];
-        }
-        return $verificationCode;
-    }
-    #[Route('/login', name: 'login')]
-    public function login(Request $request , ManagerRegistry $manager ): JsonResponse
-    {
-        $repository = $manager->getRepository(User::class);
-        $username = $request->request->get('Username');
-        $password = $request->request->get('Password');
-        $rememberMe = $request->request->get('rememberMe');
-        $user = $repository->findOneBy(['username' => $username]);
-        $isAdmin = false;
-        if ($user) {
-            if (password_verify($password, $user->getPassword())) {
-                $session = $request->getSession();
-                $session->start();
-                $sessionId=$request->getSession()->getId();
-                $session->set('userId', $user->getId());
-                $session->set('loggedIn', true);
-                if($user->getEmail()=='insatsocialclubadm1n@gmail.com') {
-                    $isAdmin = true;
-                }
-                $flag=$rememberMe==='true';
-                if($flag) {
-                    $token = $this->generateToken();
-                    $expiry = time() + (60*60*24);
-                    $cookie=new Cookie('rememberMe', $token, $expiry,'/',null,true,true,true,'None');
-                    $data = ['username' => $username];
-                    $entityManager = $manager->getManager();
-                    $repository->addToken($data, $token, $entityManager);
-                    $response = new JsonResponse(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
-                    $response->headers->setCookie($cookie);
-                    return $response;
-                }
-                else{
-                    return $this->json(['success' => true, 'message' => 'Logged in successfully', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
-                    }
-            }
-            else{
-                return $this->json(['success' => false, 'message' => 'Incorrect username or password']);
-            }
-        }
-        return $this->json(['success' => false, 'message' => 'Incorrect username or password']);
-    }
-
-    private function generateToken(): string
-    {
-        // Generate random bytes
-        $randomBytes = random_bytes(16);
-
-        // Convert random bytes to hexadecimal string
-        $token = bin2hex($randomBytes);
-        return $token;
-    }
     private function passwordResetEmail($email, $URL, $mailer): bool
     {
         $subject = "Reset Password";
@@ -343,66 +391,26 @@ class AuthController extends AbstractController
 ";
         return $mailer->sendEmail($email, $subject, $body);
     }
-    #[Route('/isLoggedIn', name: 'isLoggedIn', methods: ['POST'])]
-    public function isLoggedIn(Request $request, ManagerRegistry $doctrine): JsonResponse
-    {
-        $sessionId = $request->request->get('sessionId');
-        $session = $request->getSession();
-        if ($sessionId) {
-            $session->setId($sessionId);
-            $session->start();
-        }
-        else {
-            $session->start();
-            $sessionId=$session->getId();
-        }
-        $result = $session->get('loggedIn');
-        if ($result) {
-            return $this->json(['success' => true, 'message' => 'User is logged in', 'sessionID' => $sessionId, 'userId' => $session->get('userId')]);
-        }
-        //check for remember me
-        $result = $request->cookies->get('rememberMe');
-        if ($result) {
-            $token = $request->cookies->get('rememberMe');
-            $repository = $doctrine->getRepository(User::class);
-            $user = $repository->findOneBy(['rememberMeToken' => $token]);
-            $isAdmin = false;
-            if ($user) {
-                $session->set('userId', $user->getId());
-                $session->set('loggedIn', true);
-                if($user->getEmail()=='insatsocialclubadm1n@gmail.com') {
-                    $isAdmin = true;
-                }
-                return $this->json(['success' => true, 'message' => 'User is logged in', 'sessionID' => $sessionId, 'userId' => $user->getId(), 'isAdmin' => $isAdmin]);
-            }
-        }
-        return $this->json(['success' => false, 'message' => 'User is not logged in']);
-    }
-    #[Route('/logout', name: 'logout', methods: ['POST'])]
-    public function logout(Request $request, ManagerRegistry $doctrine): JsonResponse
-    {
-        $session = $request->getSession();
-        $session->invalidate();
-        $token = $request->cookies->get('rememberMe');
-        $repository = $doctrine->getRepository(User::class);
-        $userId = $request->request->get('userID');
-        $user = $repository->findOneBy(['id' => $userId]);
-        if ($user){
-            $user->setStatus('Offline');
-            $user->setRememberMeToken(null);
-            $entityManager = $doctrine->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-        }
-        if ($token) {
 
-            $response = new JsonResponse(['success' => true, 'message' => 'Logged out successfully']);
-            $expiry = time() - 3600;
-            $cookie=new Cookie('rememberMe', '', $expiry,'/',null,true,true,true,'None');
-            $response->headers->setCookie($cookie);
-            return $response;
+    private function generateToken(): string
+    {
+        // Generate random bytes
+        $randomBytes = random_bytes(16);
+
+        // Convert random bytes to hexadecimal string
+        $token = bin2hex($randomBytes);
+        return $token;
+    }
+
+    private function generateVerificationCode(): string
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $verificationCode = '';
+        $length = strlen($characters);
+        for ($i = 0; $i < 6; $i++) {
+            $verificationCode .= $characters[rand(0, $length - 1)];
         }
-        return $this->json(['success' => true, 'message' => 'Logged out successfully']);
+        return $verificationCode;
     }
 
 }

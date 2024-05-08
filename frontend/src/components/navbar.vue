@@ -45,12 +45,12 @@ import axios from "axios";
 
 
     export default {
-        // data () {
-        //     return {
-        //         users: [],
-        //         isAdmin: false
-        //     }
-        // },
+        data () {
+            return {
+                // users: [],
+                isAdmin: false
+            }
+        },
         name: 'NavBar',
         methods: {
             logout() {

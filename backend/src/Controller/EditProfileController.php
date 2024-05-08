@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\User;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,73 +16,60 @@ use Symfony\Component\Routing\Attribute\Route;
 class EditProfileController extends AbstractController
 {
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     #[Route('/edit-profile', name: 'edit_profile', methods: ['POST'])]
     public function UpdatePersonalDetails(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
         $repository = $doctrine->getRepository(User::class);
+        $user = $this->getUserById($request, $doctrine);
+        $entityManager = $doctrine->getManager();
 
-        $sessionId = $request->request->get('sessionId');
-        $session = $request->getSession();
-        $session->setId($sessionId);
-        $session->start();
-        $id = $session->get('userId');
-        $user = $repository->findOneBy(['id' => $id]);
-
-        $fullName = $request->request->get('fullName') ?? '';
         $username = $request->request->get('username') ?? '';
-        $birthDateString = $request->request->get('birthDate') ?? '';
-        $birthDate = new DateTime($birthDateString);
-        $bio = $request->request->get('bio') ?? '';
-        $oldPassword = $request->request->get('oldPassword') ?? '';
-        $newPassword = $request->request->get('newPassword') ?? '';
-
-
-
+        $id = $user->getId();
         $exist = $repository->findOneBy(['username' => $username]);
-
         if ($username && $exist && $exist->getId() !== $id){
             return $this->json(['success' => false, 'message' => 'Username already exists']);
         }
+
+        $oldPassword = $request->request->get('oldPassword') ?? '';
         if ($oldPassword && $this->verifyPassword($user, $id, $oldPassword)) {
             return $this->json(['success' => false, 'message' => 'Incorrect password']);
         }
-        $entityManager = $doctrine->getManager();
-        if ($fullName) {
+
+        $fullName = $request->request->get('fullName');
+        $birthDateString = $request->request->get('birthDate');
+        $bio = $request->request->get('bio');
+        $newPassword = $request->request->get('newPassword');
+
+        if ($fullName !== null) {
             $user->setFullName($fullName);
         }
-        if ($username) {
+        if ($username !== '') {
             $user->setUsername($username);
         }
-        if ($birthDate) {
+        if ($birthDateString !== null) {
+            $birthDate = new DateTime($birthDateString);
             $user->setBirthDate($birthDate);
         }
-        if ($bio) {
+        if ($bio !== null) {
             $user->setBio($bio);
         }
-        if ($newPassword) {
+        if ($newPassword !== null) {
             $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
             $user->setPassword($hashedPassword);
         }
+
         $entityManager->persist($user);
         $entityManager->flush();
 
         return $this->json(['success' => 'Personal details updated successfully']);
-
     }
 
     #[Route('/DetailsFetch', name: 'DetailsFetch', methods: ['POST'])]
     public function fetchDetails(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
-        $repository = $doctrine->getRepository(User::class);
-
-        $sessionId = $request->request->get('sessionId');
-        $session = $request->getSession();
-        $session->setId($sessionId);
-        $session->start();
-        $id = $session->get('userId');
-        $user = $repository->findOneBy(['id' => $id]);
+        $user = $this->getUserById($request, $doctrine);
 
         $data = [];
         $data['username'] = $user->getUsername();
@@ -99,14 +87,7 @@ class EditProfileController extends AbstractController
     #[Route('/UploadAvatar', name: 'UploadAvatar', methods: ['POST'])]
     public function uploadAvatar(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
-        $repository = $doctrine->getRepository(User::class);
-
-        $sessionId = $request->request->get('sessionId');
-        $session = $request->getSession();
-        $session->setId($sessionId);
-        $session->start();
-        $id = $session->get('userId');
-        $user = $repository->findOneBy(['id' => $id]);
+        $user = $this->getUserById($request, $doctrine);
 
         $avatar = $request->files->get('avatar');
         $avatar->move($this->getParameter('upload_directory'), $avatar->getClientOriginalName());
@@ -126,15 +107,7 @@ class EditProfileController extends AbstractController
     #[Route('/fetchAvatar', name: 'fetchAvatar', methods: ['POST'])]
     public function fetchAvatar(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
-        $repository = $doctrine->getRepository(User::class);
-
-        $sessionId = $request->request->get('sessionId');
-        $session = $request->getSession();
-        $session->setId($sessionId);
-        $session->start();
-        $id = $session->get('userId');
-        $user = $repository->findOneBy(['id' => $id]);
-
+        $user = $this->getUserById($request, $doctrine);
         $path = $user->getImage();
 
         if ($path){
@@ -147,15 +120,7 @@ class EditProfileController extends AbstractController
     #[Route('/setStatus', name: 'setStatus', methods: ['POST'])]
     public function setStatus(Request $request, ManagerRegistry $doctrine): JsonResponse
     {
-        $repository = $doctrine->getRepository(User::class);
-
-        $sessionId = $request->request->get('sessionId');
-        $session = $request->getSession();
-        $session->setId($sessionId);
-        $session->start();
-        $id = $session->get('userId');
-        $user = $repository->findOneBy(['id' => $id]);
-
+        $user = $this->getUserById($request, $doctrine);
         $Status = $request->request->get('status');
 
         if ($Status === 'Offline'){
@@ -177,5 +142,17 @@ class EditProfileController extends AbstractController
             return false;
         }
         return true;
+    }
+
+    private function getUserById($request, $doctrine): User
+    {
+        $repository = $doctrine->getRepository(User::class);
+
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+        return $repository->findOneBy(['id' => $id]);
     }
 }
