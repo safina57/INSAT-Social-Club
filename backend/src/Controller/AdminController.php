@@ -78,10 +78,30 @@ class AdminController extends AbstractController
     #[Route('getCommentsByPostId', name:'getCommentsByPostId',methods: ['POST'])]
     public function getCommentsByPostId(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        $postID=$request->request->get('id');
-        $post= $entityManager->getRepository(Post::class)->findBy(['id' => $postID]);
-        $comments = $entityManager->getRepository(Comment::class)->findBy(['Post' => $post]);
-        return $this->json($comments);
+        // Get post ID from request
+        $postId = $request->request->get('id');
+
+        // Fetch post entity by ID
+        $post = $entityManager->getRepository(Post::class)->findOneBy(['id' => $postId]);
+
+        // If post not found, return empty response or appropriate error handling
+        if (!$post) {
+            return new JsonResponse(['error' => 'Post not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        // Fetch comments associated with the post
+        $comments = $post->getComments();
+
+        // Serialize comments to a basic array
+        $commentsData = [];
+        foreach ($comments as $comment) {
+            $commentsData[] = [
+                'id' => $comment->getId(),
+                'content' => $comment->getContent(),
+                'username' => $comment->getUser()->getUsername()
+            ];
+        }
+        return $this->json($commentsData);
     }
 
     #[Route('getValue/{tableName}/{id}', name:'getValue',methods: ['GET'])]

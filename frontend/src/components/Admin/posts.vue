@@ -75,7 +75,7 @@ import Chart from 'chart.js/auto';
           Posts: [],
           displayedPostsCount: 8,
           mediaShown: "",
-          commentsShown: NaN,
+          commentsShown: false,
           viewMedia: false
         }
       },
@@ -116,12 +116,10 @@ import Chart from 'chart.js/auto';
           }
         },
         showComments(index, PostId) {
-          if (this.commentsShown !== index) {
-            this.commentsShown = index;
+          this.commentsShown=!this.commentsShown;
+          if (this.commentsShown) {
             this.fetchComments(PostId);
             console.log('comments')
-          } else {
-            this.commentsShown = NaN;
           }
         },
         loadMorePosts() {
@@ -151,18 +149,30 @@ import Chart from 'chart.js/auto';
                 console.error('Error fetching posts:', error);
               })
         },
+
         async fetchComments(PostID) {
           try {
             let data = new FormData();
-            data.append('id',PostID);
-            const response = await axios.post (`http://127.0.0.1:8000/admin_api/getCommentsByPostId`,data);
-            this.Posts.Comments = response.data;
-            console.log(this.Posts.Comments);
+            data.append('id', PostID);
+            const response = await axios.post(`http://127.0.0.1:8000/admin_api/getCommentsByPostId`, data);
+
+            // Extract data from response
+            const commentsData = response.data;
+
+            // Map the comments data to extract only the required fields (username and content)
+            const formattedComments = commentsData.map(item => ({
+              username: item.username,
+              content: item.content,
+            }));
+
+            // Update state or perform any other actions with the formatted comments
+            this.Posts.Comments = formattedComments;
           } catch (error) {
             console.error('Error fetching Comments', error);
             alert('Comments not Shown');
           }
         },
+
         async fetchPostActivity() {
           try {
             const response = await axios.get('http://127.0.0.1:8000/admin_api/postActivity');

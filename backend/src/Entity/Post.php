@@ -30,23 +30,23 @@ class Post
     #[ORM\ManyToOne(inversedBy: 'posts')]
     private ?User $User = null;
 
-//    /**
-//     * @var Collection<int, Comment>
-//     */
-//    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'Post', orphanRemoval: true)]
-//    private Collection $comments;
-//
+    /**
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'Post', orphanRemoval: true)]
+    private Collection $comments;
+
 //    /**
 //     * @var Collection<int, React>
 //     */
-//   /* #[ORM\OneToMany(targetEntity: React::class, mappedBy: 'Post', orphanRemoval: true)]
-//    private Collection $reacts;*/
-//
-//    public function __construct()
-//    {
-//        $this->comments = new ArrayCollection();
-//        //$this->reacts = new ArrayCollection();
-//    }
+   /* #[ORM\OneToMany(targetEntity: React::class, mappedBy: 'Post', orphanRemoval: true)]
+    private Collection $reacts;*/
+
+    public function __construct()
+    {
+        $this->comments = new ArrayCollection();
+        //$this->reacts = new ArrayCollection();
+    }
 
 
     public function getId(): ?int
