@@ -22,7 +22,7 @@ class AuthController extends AbstractController
         $repository = $doctrine->getRepository(User::class);
         $email = $request->request->get('Email');
         $username = $request->request->get('Username');
-        $existingUser =  $repository->findOneBy(['email' => $email, 'username' => $username]);
+        $existingUser =  $repository->userExist($username, $email);
         if (!$existingUser) {
             return $this->json(['success' => true, 'message' => 'Username and Email are available']);
         } else {
@@ -384,17 +384,18 @@ class AuthController extends AbstractController
         $session = $request->getSession();
         $session->invalidate();
         $token = $request->cookies->get('rememberMe');
-
+        $repository = $doctrine->getRepository(User::class);
+        $userId = $request->request->get('userID');
+        $user = $repository->findOneBy(['id' => $userId]);
+        if ($user){
+            $user->setStatus('Offline');
+            $user->setRememberMeToken(null);
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
         if ($token) {
-            $repository = $doctrine->getRepository(User::class);
-            $userId = $request->request->get('userID');
-            $user = $repository->findOneBy(['id' => $userId]);
-            if ($user){
-                $user->setRememberMeToken(null);
-                $entityManager = $doctrine->getManager();
-                $entityManager->persist($user);
-                $entityManager->flush();
-            }
+
             $response = new JsonResponse(['success' => true, 'message' => 'Logged out successfully']);
             $expiry = time() - 3600;
             $cookie=new Cookie('rememberMe', '', $expiry,'/',null,true,true,true,'None');

@@ -31,6 +31,17 @@ class UserRepository extends ServiceEntityRepository
         $entityManager->flush();
         return true;
     }
+    public function userExist($username, $email) : bool
+    {
+        $query = $this->createQueryBuilder('u')
+            ->where('u.username = :username')
+            ->orWhere('u.email = :email')
+            ->setParameter('username', $username)
+            ->setParameter('email', $email)
+            ->getQuery();
+        $result = $query->getOneOrNullResult();
+        return $result !== null;
+    }
 
     //    /**
     //     * @return User[] Returns an array of User objects
