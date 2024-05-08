@@ -92,6 +92,12 @@ api_UploadAvatar:
 api_fetchAvatar:
     path: /api/fetchAvatar
     controller: App\Controller\EditProfileController::fetchAvatar
+
+api_setStatus:
+    path: /api/setStatus
+    controller: App\Controller\EditProfileController::setStatus
+
 homePage_deletePost:
     path: /homepage/deletePost
     controller: App\Controller\HomePageController::deletePost
+

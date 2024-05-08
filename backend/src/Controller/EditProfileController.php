@@ -128,8 +128,6 @@ class EditProfileController extends AbstractController
     {
         $repository = $doctrine->getRepository(User::class);
 
-        $repository = $doctrine->getRepository(User::class);
-
         $sessionId = $request->request->get('sessionId');
         $session = $request->getSession();
         $session->setId($sessionId);
@@ -144,6 +142,32 @@ class EditProfileController extends AbstractController
         }
         return $this->json(['success' => false, 'message' => 'Failed to fetch avatar']);
 
+    }
+
+    #[Route('/setStatus', name: 'setStatus', methods: ['POST'])]
+    public function setStatus(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $repository = $doctrine->getRepository(User::class);
+
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $id = $session->get('userId');
+        $user = $repository->findOneBy(['id' => $id]);
+
+        $Status = $request->request->get('status');
+
+        if ($Status === 'Offline'){
+            $user->setStatus('Offline');
+        }else{
+            $user->setStatus('Online');
+        }
+        $entityManager = $doctrine->getManager();
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->json(['success' => true, 'message' => 'Status updated successfully']);
     }
 
     private function verifyPassword($user, $id, $oldPassword) : bool
