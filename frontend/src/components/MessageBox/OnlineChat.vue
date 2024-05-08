@@ -28,7 +28,6 @@ export default {
       messages: [],
       newMessage: '',
       currentUser: '',
-      isScrolledDown: true
     };
   },
   watch: {
@@ -36,7 +35,6 @@ export default {
       immediate: true,
       handler(newValue, oldValue) {
         if (newValue !== oldValue) {
-          this.isScrolledDown = true;
           this.fetchMessages();
         }
       }
@@ -51,13 +49,7 @@ export default {
       axios.post('http://127.0.0.1:8000/messengerApi/fetch-messages', data)
           .then(response => {
             this.messages = response.data;
-            if (this.isScrolledDown) {
-              this.$nextTick(() => {
-                this.scrollToBottom();
-              });
-              this.isScrolledDown = false;
-            }
-          })
+            })
           .catch(error => {
             console.error('Error fetching messages:', error);
           });
@@ -72,7 +64,6 @@ export default {
           .then(response => {
             console.log(response.data);
             if (response.data.success) {
-              this.isScrolledDown = true;
               this.fetchMessages();
               this.newMessage = '';
             }
@@ -94,9 +85,6 @@ export default {
         return fromName === previousMessage.fromName && timeDifference <= 5;
       }
       return false;
-    },
-    scrollToBottom() {
-      this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
     },
     formatMessageTime(time) {
       const messageTime = new Date(time);
