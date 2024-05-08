@@ -126,19 +126,16 @@ export default {
             }
             if (action === 'login' && response.data.success) {
 
-              /*sessionStorage.setItem('sessionId', response.data.sessionID);
+              sessionStorage.setItem('sessionId', response.data.sessionID);
               sessionStorage.setItem('userId', response.data.userId);
+              sessionStorage.setItem('isAdmin', response.data.isAdmin);
               if (response.data.isAdmin) {
                 this.$router.push('/admin');
               } else {
                 this.$router.push('/Home');
               }
 
-               */
-              this.$router.push('/Home');
-              console.log(response.data);
-              sessionStorage.setItem('sessionId', response.data.sessionID);
-              sessionStorage.setItem('userId', response.data.userId);
+
             }
             if (this.isSignup && response.data.success) {
               this.$router.push('/login/verifyEmail');
