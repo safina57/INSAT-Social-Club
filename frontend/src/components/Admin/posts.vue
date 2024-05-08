@@ -23,7 +23,7 @@
                         <button @click="showMedia(post.Media)" class="btn btn-outline-secondary">View Media</button>
                     </td>
                     <td>
-                        <button @click="showComments(index)" class="btn btn-outline-secondary">View Comments</button>
+                        <button @click="showComments(index, post.Post_ID)" class="btn btn-outline-secondary">View Comments</button>
                     </td>
                     <td>
                         <button @click="deletePost(post.Post_ID)" class="btn btn-danger">Delete</button>
@@ -115,9 +115,11 @@ import Chart from 'chart.js/auto';
             this.mediaShown = "";
           }
         },
-        showComments(index) {
+        showComments(index, PostId) {
           if (this.commentsShown !== index) {
             this.commentsShown = index;
+            this.fetchComments(PostId);
+            console.log('comments')
           } else {
             this.commentsShown = NaN;
           }
@@ -131,7 +133,6 @@ import Chart from 'chart.js/auto';
                     Username: post.User.username,
                     Content: post.caption,
                     Media: post.media,
-                    Comments: post.comments,
                     Post_ID: post.id
                   };
                 }
@@ -149,6 +150,18 @@ import Chart from 'chart.js/auto';
               .catch(error => {
                 console.error('Error fetching posts:', error);
               })
+        },
+        async fetchComments(PostID) {
+          try {
+            let data = new FormData();
+            data.append('id',PostID);
+            const response = await axios.post (`http://127.0.0.1:8000/admin_api/getCommentsByPostId`,data);
+            this.Posts.Comments = response.data;
+            console.log(this.Posts.Comments);
+          } catch (error) {
+            console.error('Error fetching Comments', error);
+            alert('Comments not Shown');
+          }
         },
         async fetchPostActivity() {
           try {
