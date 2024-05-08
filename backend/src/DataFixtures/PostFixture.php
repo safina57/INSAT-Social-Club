@@ -13,24 +13,25 @@ class PostFixture extends Fixture
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
-        $user= new User();
-        $user->setFullname($faker->name)
-            ->setEmail($faker->email)
-            ->setUsername($faker->name)
-            ->setPassword($faker->password())
-            ->setBirthDate($faker->dateTimeBetween('-90 years', '-18 years'))
-            ->setStatus('online')
-        ;
-        $manager->persist($user);
-        $manager->flush();
-        for ($i=0; $i < 10; $i++) {
-            $post = new Post();
-            $post->setCaption($faker->realText($maxNbChars = 50, $indexSize = 2))
-            ->setReactCount($faker->numberBetween($min = 0, $max = 10))
-            ->setUser($user);
-            $manager->persist($post);
+        for ($i = 0; $i < 10; $i++) {
+            $user = new User();
+            $password = $faker->password();
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $user->setFullname($faker->name)
+                ->setEmail($faker->email)
+                ->setUsername($faker->userName)
+                ->setPassword($hashedPassword)
+                ->setBirthDate($faker->dateTimeBetween('-90 years', '-18 years'))
+                ->setStatus('Offline');
+            $manager->persist($user);
+            for ($j = 0; $j < 10; $j++) {
+                $post = new Post();
+                $post->setCaption($faker->realText($maxNbChars = 50, $indexSize = 2))
+                    ->setReactCount($faker->numberBetween($min = 0, $max = 10))
+                    ->setUser($user);
+                $manager->persist($post);
+            }
         }
         $manager->flush();
     }
 }
-

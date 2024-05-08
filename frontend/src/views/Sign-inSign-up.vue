@@ -58,6 +58,8 @@
 
 <script>
 import CustomForm from '@/components/Authentification/CustomForm.vue';
+import {mapActions} from 'vuex';
+
 
 export default {
   components: {
@@ -69,11 +71,13 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['setEmailVerified']),
     switchToSignin() {
       this.currentForm = 'signin';
     },
     switchToSignup() {
       this.currentForm = 'signup';
+      this.setEmailVerified(false);
     },
     updateRememberMe(event) {
       this.$store.dispatch('updateRememberMe', event.target.checked);
