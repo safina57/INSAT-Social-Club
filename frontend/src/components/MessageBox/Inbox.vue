@@ -61,10 +61,9 @@ export default {
       const sessionId = sessionStorage.getItem('sessionId');
       let data = new FormData();
       data.append('sessionId', sessionId);
-      axios.post('http://127.0.0.1:8000/api/all-users', data)
+      axios.post('http://127.0.0.1:8000/messengerApi/all-users', data)
           .then(response => {
             let result = response.data;
-            console.log(result);
             result = result.map(user=>transformUserData(user));
             this.users = result;
             this.$emit('users-fetched', response.data);

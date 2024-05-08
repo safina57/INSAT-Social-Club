@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+#[Route('/messengerApi')]
 class MessengerController extends AbstractController
 {
 
@@ -23,7 +23,7 @@ class MessengerController extends AbstractController
         return $user->getUsername();
     }
 
-    #[Route('/api/all-users', name: 'api_all_users', methods: ['POST'])]
+    #[Route('/all-users', name: 'api_all_users', methods: ['POST'])]
     public function getAllUsers(ManagerRegistry $doctrine, Request $request): JsonResponse{
         $userRepository = $doctrine->getRepository(User::class);
         $sessionId = $request->request->get('sessionId');
@@ -46,20 +46,19 @@ class MessengerController extends AbstractController
         //return new JsonResponse(['success' => true, 'users' => $allUsers]);
     }
 
-    #[Route('/api/send-message', name: 'api_send_message', methods: ['POST'])]
+    #[Route('/send-message', name: 'api_send_message', methods: ['POST'])]
     public function sendMessage(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
+
         $sessionId = $request->request->get('sessionId');
         $session = $request->getSession();
         $session->setId($sessionId);
         $session->start();
-
         $userId = $session->get('userId');
         $toName = $session->get('to_name');
-        $message = $request->getContent();
-
+        $message = $request->request->get('message');
         if (!$userId || !$toName || empty($message)) {
-            return new JsonResponse(['success' => false, 'message' => 'Error occurred while sending message']);
+            return new JsonResponse(['success' => false, 'message' => 'Error occurred while sending message1']);
         }
 
         $fromName = $this->getUsernameFromUserId($doctrine, $userId);
@@ -80,23 +79,22 @@ class MessengerController extends AbstractController
         }
     }
 
-    #[Route('/api/fetch-messages', name: 'api_fetch_messages', methods: ['POST'])]
+    #[Route('/fetch-messages', name: 'api_fetch_messages', methods: ['POST'])]
     public function fetchMessages(ManagerRegistry $doctrine, Request $request): JsonResponse
     {
         $sessionId = $request->request->get('sessionId');
+        $username = $request->request->get('userName');
         $session = $request->getSession();
         $session->setId($sessionId);
         $session->start();
-
+        $session->set('to_name', $username);
         if (!$session->has('to_name')) {
             return new JsonResponse(['success' => false, 'message' => 'No recipient selected']);
         }
-
         // Get the recipient's name from the session
         $toName = $session->get('to_name');
         $userId = $session->get('userId');
         $fromName = $this->getUsernameFromUserId($doctrine, $userId);
-
         // Fetch messages from the database
         $chatRepository = $doctrine->getRepository(Chat::class);
         $queryBuilder = $chatRepository->createQueryBuilder('c');
@@ -104,12 +102,12 @@ class MessengerController extends AbstractController
         $messages = $queryBuilder->where(
             $queryBuilder->expr()->orX(
                 $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq('c.fromName', ':fromName'),
-                    $queryBuilder->expr()->eq('c.toName', ':toName')
+                    $queryBuilder->expr()->eq('c.from_name', ':fromName'),
+                    $queryBuilder->expr()->eq('c.to_name', ':toName')
                 ),
                 $queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq('c.fromName', ':toName'),
-                    $queryBuilder->expr()->eq('c.toName', ':fromName')
+                    $queryBuilder->expr()->eq('c.from_name', ':toName'),
+                    $queryBuilder->expr()->eq('c.to_name', ':fromName')
                 )
             )
         )
@@ -119,7 +117,7 @@ class MessengerController extends AbstractController
             ->getQuery()
             ->getResult();
 
-        return new JsonResponse(['success' => true, 'messages' => $messages]);
+        return $this->json($messages);
     }
 
 }

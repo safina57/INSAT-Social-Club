@@ -48,21 +48,15 @@ export default {
       let sessionId = sessionStorage.getItem('sessionId');
       data.append('sessionId', sessionId);
       data.append('userName', this.selectedUser.username);
-      axios.post('http://127.0.0.1:8000/api/fetch-messages', data)
+      axios.post('http://127.0.0.1:8000/messengerApi/fetch-messages', data)
           .then(response => {
-            if(response.data.success){
-              this.messages = response.data.messages;
+              this.messages = response.data;
               if (this.isScrolledDown){
                 this.$nextTick(() => {
                 this.scrollToBottom();
               });
               this.isScrolledDown = false;
               }
-
-            }
-            else{
-              this.messages = [];
-            }
           })
           .catch(error => {
             console.error('Error fetching messages:', error);
@@ -74,8 +68,9 @@ export default {
       let sessionId = sessionStorage.getItem('sessionId');
       data.append('sessionId', sessionId);
       data.append('message', this.newMessage);
-      axios.post('http://127.0.0.1:8000/api/send-message', data)
+      axios.post('http://127.0.0.1:8000/messengerApi/send-message', data)
           .then(response => {
+            console.log(response.data);
             if (response.data.success) {
               this.isScrolledDown = true;
               this.fetchMessages();
@@ -139,7 +134,7 @@ export default {
     let data = new FormData();
     let sessionId = sessionStorage.getItem('sessionId');
     data.append('sessionId', sessionId);
-    axios.post('http://127.0.0.1:8000/api/fetch-messages', data)
+    axios.post('http://127.0.0.1:8000/messengerApi/fetch-messages', data)
     .then(response => {
       if (response.data.success) {
         this.currentUser = response.data.username;
