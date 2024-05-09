@@ -93,7 +93,7 @@
         this.fetchPosts();
       },
       handlePostDeleted(){
-            this.fetchPosts();
+        this.fetchPosts();
       }
   },
   created() {

@@ -60,13 +60,10 @@ class HomePageController extends AbstractController
             $posts = $entityManager->getRepository(Post::class)->findBy(['User'=>$user]);
         }
 
-
         $posts = array_reverse($posts);
         $postsWithIsLiked = [];
         if (!$posts) {
-            throw $this->createNotFoundException(
-                'No posts found'
-            );
+            return $this->json($posts);
         }
 
         foreach ($posts as $post) {
@@ -197,12 +194,7 @@ class HomePageController extends AbstractController
 
         return $this->json([
             'success' => true,
-            'message' => 'Comment added successfully',
-            'comment' => [
-                'id' => $comment->getId(),
-                'caption' => $comment->getCaption(),
-
-            ]
+            'message' => 'Comment added successfully'
         ]);
     }
     #[Route('/getComments', name: 'getComments',methods: ['POST'])]
