@@ -218,8 +218,12 @@ class HomePageController extends AbstractController
         $session->setId($sessionId);
         $session->start();
         $id = $session->get('userId');
-        $user = $repository->findOneBy(['id' => $id]);
 
+        if(!$request->get('profileUser_ID') ){
+            $user = $repository->findOneBy(['id' => $id]);
+        }else{
+            $user = $repository->find($request->get('profileUser_ID'));
+        }
 
         $data['email'] = $user->getEmail();
         $data['img'] = $user->getImage();
