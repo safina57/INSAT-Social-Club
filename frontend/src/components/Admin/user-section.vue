@@ -18,7 +18,7 @@
             <td>{{ user.Username }}</td>
             <td>{{ user.Email }}</td>
             <td>
-              <button @click="deleteUser(user.User_ID)" class="btn btn-danger">Delete</button>
+              <button v-if="user.Email !== 'insatsocialclubadm1n@gmail.com'" @click="deleteUser(user.User_ID)" class="btn btn-danger">Delete</button>
             </td>
 <!--          </div>-->
         </tr>
