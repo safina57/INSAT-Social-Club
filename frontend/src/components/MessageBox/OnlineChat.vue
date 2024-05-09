@@ -95,7 +95,7 @@ export default {
   mounted() {
     this.fetchInterval = setInterval(() => {
       this.fetchMessages();
-    }, 500);
+    }, 1000);
     let data = new FormData();
     let sessionId = sessionStorage.getItem('sessionId');
     data.append('sessionId', sessionId);

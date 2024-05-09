@@ -31,7 +31,7 @@ export default {
     this.fetchUsers();
     this.fetchInterval = setInterval(() => {
       this.fetchUsers();
-    }, 500);
+    }, 10000);
   },
   beforeUnmount() {
     clearInterval(this.fetchInterval);
