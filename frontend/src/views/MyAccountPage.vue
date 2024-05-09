@@ -117,6 +117,10 @@ export default {
                 if (sessionId !== null) {
                     data.append('sessionId', sessionId);
                 }
+                if(this.getParameterByName('User_ID')){
+                  data.append('profileUser_ID',this.getParameterByName('User_ID'));
+                }
+
                 axios.post(`http://127.0.0.1:8000/homepage/getUser`,data)
                 .then(response => {
                   if(response.data.success){
