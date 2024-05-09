@@ -50,15 +50,16 @@ export default {
       }
     },
     redirectToProfile(user) {
+      console.log(user);
       this.$router.push(`/profile?User_ID=${user.userID}`);
     },
     fetchUsers() {
       function transformUserData(user) {
         return {
-          userID: user.userID,
+          userID: user.id,
           username: user.username,
-          avatar: user.img ? require(`../../../../backend/avatars/${user.img}`) : require(`../../../public/img/noProfileImage.jpg`),
-          userStatus: user.userStatus
+          avatar: user.image ? require(`../../../../backend/avatars/${user.image}`) : require(`../../../public/img/noProfileImage.jpg`),
+          userStatus: user.status
         };
       }
       const sessionId = sessionStorage.getItem('sessionId');
@@ -67,6 +68,7 @@ export default {
       axios.post('http://127.0.0.1:8000/messengerApi/all-users', data)
           .then(response => {
             let result = response.data;
+            console.log('Users:', result);
             result = result.map(user => transformUserData(user));
             this.users = result;
             this.$emit('users-fetched', response.data);
