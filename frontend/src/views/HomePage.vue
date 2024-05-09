@@ -44,7 +44,7 @@
                         user: {
                             id:post.post.User.id,
                             name: post.post.User.username,
-                            img: post.post.User.image ? /*require('../back/avatars/' + post.img)*/false : require('../../public/img/noProfileImage.jpg'),
+                            img: post.post.User.image ? require('../../../backend/avatars/' + post.post.User.image) : require('../../public/img/noProfileImage.jpg'),
                             alt: 'User Image'
                         },
                         content: post.post.caption,

@@ -119,7 +119,7 @@ export default {
           .then(response => {
             this.comments = response.data;
             this.comments.forEach(comment => {
-              comment.img = comment.img === null ? false: require('../../../public/img/noProfileImage.jpg');//require('../../../public/img/noProfileImage.jpg') : "";//require(`../../back/avatars/${comment.img}`);
+              comment.User.image = comment.User.image ? require('../../../../backend/avatars/' + comment.User.image ): require('../../../public/img/noProfileImage.jpg')
             });
 
           })
