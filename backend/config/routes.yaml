@@ -20,6 +20,10 @@ api_fetch_messages:
     path: /messengerApi/fetch-messages
     controller: App\Controller\MessengerController::fetchMessages
 
+api_get_current_user:
+    path: /messengerApi/get-current-user
+    controller: App\Controller\MessengerController::getCurrentUserName
+
 admin_api_getAllPosts:
     path: /admin_api/getAll/Post
     controller: App\Controller\AdminController::getAll

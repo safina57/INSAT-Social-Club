@@ -99,9 +99,10 @@ export default {
     let data = new FormData();
     let sessionId = sessionStorage.getItem('sessionId');
     data.append('sessionId', sessionId);
-    axios.post('http://127.0.0.1:8000/messengerApi/fetch-messages', data)
+    axios.post('http://127.0.0.1:8000/messengerApi/get-current-user', data)
         .then(response => {
           if (response.data.success) {
+            console.log(response.data);
             this.currentUser = response.data.username;
           }
         })

@@ -119,5 +119,15 @@ class MessengerController extends AbstractController
 
         return $this->json($messages);
     }
-
+    #[Route('/get-current-username', name: 'api_get_current_username', methods: ['POST'])]
+    public function getCurrentUserName(ManagerRegistry $doctrine, Request $request): JsonResponse
+    {
+        $sessionId = $request->request->get('sessionId');
+        $session = $request->getSession();
+        $session->setId($sessionId);
+        $session->start();
+        $userId = $session->get('userId');
+        $username = $this->getUsernameFromUserId($doctrine, $userId);
+        return new JsonResponse(['success' => true, 'username' => $username]);
+    }
 }
