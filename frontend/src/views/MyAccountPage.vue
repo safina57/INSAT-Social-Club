@@ -61,11 +61,11 @@ export default {
               user: {
                 id:post.post.User.id,
                 name: post.post.User.username,
-                img: post.post.User.image ? /*require('../back/avatars/' + post.img)*/false : require('../../public/img/noProfileImage.jpg'),
+                img: post.post.User.image ?  require('../../../backend/avatars/' + post.post.User.image) : require('../../public/img/noProfileImage.jpg'),
                 alt: 'User Image'
               },
               content: post.post.caption,
-              img: post.post.media ?/*require('../back/uploads/' + post.Media)*/ false : "",
+              img: post.post.media ?require('../../../backend/media/' + post.post.media): "",
               alt: 'Post Image',
               commentsShown: false,
               newCommentContent: '',
@@ -98,13 +98,14 @@ export default {
         },
         fetchUserInfo(){
             function transformUserData(user) {
+                    console.log("user info", user);
                     return {
 
                         id: user.id,
                         name : user.fullname,
                         username: user.username,
                         email: user.email,
-                        avatar: user.img? require(`../../../backend/avatars/${user.img}`) : require(`../../public/img/noProfileImage.jpg`),
+                        avatar: user.img?  require('../../../backend/avatars/' + user.img) : require(`../../public/img/noProfileImage.jpg`),
                         background: user.background? user.background : 'https://wweb.dev/resources/navigation-generator/logo-placeholder-background.png',
                         bio: user.bio,
 
