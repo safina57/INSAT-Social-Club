@@ -27,9 +27,9 @@
                 </li>
             </ul>
         </div>
-<!--        <form class="d-flex">-->
-<!--            <searchBar :users="users"/>-->
-<!--        </form>-->
+        <form class="d-flex">
+            <searchBar :users="users"/>
+        </form>
         <ul class="navbar-nav">
           <li class="nav-item">
             <a class="nav-link" style="font-size: 20px" @click="logout">Logout</a>
@@ -41,13 +41,13 @@
 
 <script>
 import axios from "axios";
-// import searchBar from '@/components/searchBar.vue';
+import searchBar from '@/components/searchBar.vue';
 
 
     export default {
         data () {
             return {
-                // users: [],
+                users: [],
                 isAdmin: false
             }
         },
@@ -92,36 +92,39 @@ import axios from "axios";
             redirectContactUs() {
                 this.$router.push('/Contact');
             },
-        //     fetchUsersInfo(){
-        //     function transformUserData(user) {
-        //             return {
-        //
-        //                 userID: user.userID,
-        //                 name : user.fullName,
-        //                 username: user.userName,
-        //                 email: user.email,
-        //                 avatar: user.img? require(`../back/avatars/${user.img}`) : require(`../../public/img/noProfileImage.jpg`),
-        //                 bio: user.bio,
-        //
-        //             };
-        //         }
-        //         axios.get(`http://localhost/php/Social-Media-Clone/src/back/HomeApi.php?action=getAllUsers`)
-        //         .then(response => {
-        //             let result = response.data;
-        //             result = result.map(user=>transformUserData(user));
-        //             this.users = result;
-        //         })
-        //         .catch(error => {
-        //             console.error('Error fetching User info:', error);
-        // });
-        //     }
+            fetchUsersInfo(){
+            function transformUserData(user) {
+                    return {
+
+                        userID: user.id,
+                        name : user.fullname,
+                        username: user.username,
+                        email: user.email,
+                        avatar: user.image ? require(`../../../backend/avatars/${user.image}`) : require(`../../public/img/noProfileImage.jpg`),
+                        bio: user.bio,
+
+                    };
+                }
+                const sessionId = sessionStorage.getItem('sessionId');
+                let data = new FormData();
+                data.append('sessionId', sessionId);
+                axios.post(`http://127.0.0.1:8000/messengerApi/all-users`, data)
+                .then(response => {
+                    let result = response.data;
+                    result = result.map(user=>transformUserData(user));
+                    this.users = result;
+                })
+                .catch(error => {
+                    console.error('Error fetching User info:', error);
+        });
+            }
         },
-        // components: {
-        //     searchBar
-        // },
-        // created () {
-        //     this.fetchUsersInfo();
-        // },
+        components: {
+            searchBar
+        },
+        created () {
+            this.fetchUsersInfo();
+        },
         mounted() {
             let data = new FormData();
             let sessionId = sessionStorage.getItem('sessionId');

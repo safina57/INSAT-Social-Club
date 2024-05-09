@@ -68,7 +68,6 @@ export default {
       axios.post('http://127.0.0.1:8000/messengerApi/all-users', data)
           .then(response => {
             let result = response.data;
-            console.log('Users:', result);
             result = result.map(user => transformUserData(user));
             this.users = result;
             this.$emit('users-fetched', response.data);
