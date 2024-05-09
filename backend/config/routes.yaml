@@ -8,6 +8,17 @@ api_login:
     path: /api/login
     controller: App\Controller\AuthController::login
 
+api_all_users:
+    path: /messengerApi/all-users
+    controller: App\Controller\MessengerController::getAllUsers
+
+api_send_message:
+    path: /messengerApi/send-message
+    controller: App\Controller\MessengerController::sendMessage
+
+api_fetch_messages:
+    path: /messengerApi/fetch-messages
+    controller: App\Controller\MessengerController::fetchMessages
 
 admin_api_getAllPosts:
     path: /admin_api/getAll/Post

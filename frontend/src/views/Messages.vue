@@ -18,40 +18,33 @@
 </template>
 
 <script>
+import OnlineChat from '@/components/MessageBox/OnlineChat.vue';
+import navBar from '@/components/navbar.vue';
+import Inbox from '@/components/MessageBox/Inbox.vue';
+
 export default {
-  name: 'MessagesT',
-}
-
+    data() {
+        return {
+            selectedUser: null,
+            users: []
+        };
+    },
+    name: 'MessageBox',
+    components: {
+        OnlineChat,
+        navBar,
+        Inbox
+    },
+    methods: {
+        setUsers(users) {
+            this.users = users;
+        },
+        selectUser(user) {
+            this.selectedUser = user;
+        }
+    }
+};
 </script>
-
-<!--<script>-->
-<!--import OnlineChat from '@/components/MessageBox/OnlineChat.vue';-->
-<!--import navBar from '@/components/navbar.vue';-->
-<!--import Inbox from '@/components/MessageBox/Inbox.vue';-->
-
-<!--export default {-->
-<!--    data() {-->
-<!--        return {-->
-<!--            selectedUser: null,-->
-<!--            users: []-->
-<!--        };-->
-<!--    },-->
-<!--    name: 'MessageBox',-->
-<!--    components: {-->
-<!--        OnlineChat,-->
-<!--        navBar,-->
-<!--        Inbox-->
-<!--    },-->
-<!--    methods: {-->
-<!--        setUsers(users) {-->
-<!--            this.users = users;-->
-<!--        },-->
-<!--        selectUser(user) {-->
-<!--            this.selectedUser = user;-->
-<!--        }-->
-<!--    }-->
-<!--};-->
-<!--</script>-->
 
 <style scoped>
 nav {
