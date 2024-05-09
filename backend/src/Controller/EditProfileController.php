@@ -135,6 +135,16 @@ class EditProfileController extends AbstractController
         return $this->json(['success' => true, 'message' => 'Status updated successfully']);
     }
 
+    #[Route('/verifyAdmin', name: 'verifyAdmin', methods: ['POST'])]
+    public function verifyAdmin(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {
+        $user = $this->getUserById($request, $doctrine);
+        if ($user->getEmail() === 'insatsocialclubadm1n@gmail.com'){
+            return $this->json(['success' => true, 'message' => 'Admin verified']);
+        }
+        return $this->json(['success' => false, 'message' => 'Admin not verified']);
+    }
+
     private function verifyPassword($user, $id, $oldPassword) : bool
     {
         $hashedPassword = $user->getPassword();

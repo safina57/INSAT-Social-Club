@@ -122,25 +122,20 @@ import axios from "axios";
         // created () {
         //     this.fetchUsersInfo();
         // },
-        // mounted() {
-        //     let data = new FormData();
-        //     let sessionId = sessionStorage.getItem('sessionId');
-        //     data.append('sessionId', sessionId);
-        //     axios.post('http://localhost/php/Social-Media-Clone/src/back/api.php?action=verifyAdmin', data)
-        //     .then(response => {
-        //         if(response.data.success){
-        //             if(response.data.isAdmin){
-        //                 this.isAdmin = true;
-        //             }
-        //             else{
-        //                 this.isAdmin = false;
-        //             }
-        //   }
-        // })
-        // .catch(error => {
-        //   console.error('Error fetching profile details:', error);
-        // });
-        // }
+        mounted() {
+            let data = new FormData();
+            let sessionId = sessionStorage.getItem('sessionId');
+            data.append('sessionId', sessionId);
+            axios.post('http://127.0.0.1:8000/api/verifyAdmin', data)
+            .then(response => {
+                if(response.data.success){
+                  this.isAdmin = true;
+                }
+            })
+                .catch(error => {
+                  console.error('Error fetching profile details:', error);
+                });
+        }
     }
 
 </script>

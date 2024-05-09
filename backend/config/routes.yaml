@@ -112,6 +112,10 @@ api_setStatus:
     path: /api/setStatus
     controller: App\Controller\EditProfileController::setStatus
 
+api_verifyAdmin:
+    path: /api/verifyAdmin
+    controller: App\Controller\AuthController::verifyAdmin
+
 homePage_deletePost:
     path: /homepage/deletePost
     controller: App\Controller\HomePageController::deletePost
