@@ -189,7 +189,6 @@ class HomePageController extends AbstractController
         $comments = array_reverse($comments);
 
         return $this->json($comments);
-
     }
     #[Route('/getUser', name: 'getUser',methods: ['POST'])]
     public function getUserInfo(ManagerRegistry $doctrine, Request $request): JsonResponse

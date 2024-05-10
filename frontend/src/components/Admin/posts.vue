@@ -39,26 +39,27 @@
     </div>
     <div class="row">
         <div class="col-sm-6">
-            <div v-if="!isNaN(mediaShown) && Posts[mediaShown] && Posts[mediaShown].Media">
-                {{ Posts[mediaShown].Media }}
-            </div>
+          <div class="image-container" v-if="mediaShown">
+            <img :src="mediaShown" alt="Media Image" style="max-width: 100%; height: auto;">
+          </div>
+          <div class="image-container" v-else>
+            <p v-if="viewMedia">No Media to show</p>
+          </div>
+<!--            <div v-if="!isNaN(mediaShown) && Posts[mediaShown] && Posts[mediaShown].Media">-->
+<!--                {{ Posts[mediaShown].Media }}-->
+<!--            </div>-->
         </div>
         <div class="col-sm-6">
-            <div v-if="!isNaN(commentsShown) && Posts[commentsShown] && Posts[commentsShown].Comments">
-                <div v-for="comment in Posts[commentsShown].Comments" :key="comment.comment_ID">
-                    <p>{{ comment.username }}</p>
-                    <p>{{ comment.Content }}</p>
+            <div v-if="!isNaN(commentsShown) && Posts[commentsShown] && Posts[commentsShown].Comments" class="Comments-container">
+                <div v-for="(comment,index) in Posts[commentsShown].Comments" :key="index" >
+                    <p class="image-container">{{ comment.username }}</p>
+                    <p>{{ comment.content }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="image-container" v-if="mediaShown">
-        <img :src="mediaShown" alt="Media Image" style="max-width: 100%; height: auto;">
-    </div>
-    <div class="image-container" v-else>
-        <p v-if="viewMedia">No Media to show</p>
-    </div>
+
 
     <div class="Chart-Container">
       <canvas ref="chartCanvas"></canvas>
@@ -75,7 +76,7 @@ import Chart from 'chart.js/auto';
           Posts: [],
           displayedPostsCount: 8,
           mediaShown: "",
-          commentsShown: false,
+          commentsShown: NaN,
           viewMedia: false
         }
       },
@@ -89,8 +90,6 @@ import Chart from 'chart.js/auto';
       },
       methods: {
         deletePost(Post_ID) {
-          let data = new FormData();
-          data.append('Post_ID', Post_ID);
           axios.post(`http://127.0.0.1:8000/admin_api/deleteRow/post/${Post_ID}`)
               .then(response => {
                 if (response.data.success) {
@@ -110,16 +109,20 @@ import Chart from 'chart.js/auto';
         showMedia(media) {
           this.viewMedia = true;
           if (media) {
-            this.mediaShown = "media";
+            console.log (media);
+            this.mediaShown = '../../../../backend/media/'+media;
           } else {
             this.mediaShown = "";
           }
         },
         showComments(index, PostId) {
-          this.commentsShown=!this.commentsShown;
-          if (this.commentsShown) {
-            this.fetchComments(PostId);
-            console.log('comments')
+          if (this.commentsShown!==index) {
+            this.fetchComments(PostId, index);
+            this.commentsShown=index;
+          }
+          else
+          {
+            this.commentsShown = NaN;
           }
         },
         loadMorePosts() {
@@ -130,7 +133,7 @@ import Chart from 'chart.js/auto';
                   return {
                     Username: post.User.username,
                     Content: post.caption,
-                    Media: post.media,
+                    Media:post.media,
                     Post_ID: post.id
                   };
                 }
@@ -150,23 +153,24 @@ import Chart from 'chart.js/auto';
               })
         },
 
-        async fetchComments(PostID) {
+        async fetchComments(PostID, index) {
           try {
             let data = new FormData();
-            data.append('id', PostID);
-            const response = await axios.post(`http://127.0.0.1:8000/admin_api/getCommentsByPostId`, data);
+            data.append('Post_ID', PostID);
+            const response = await axios.post(`http://127.0.0.1:8000/homepage/getComments`, data);
 
             // Extract data from response
             const commentsData = response.data;
-
+            console.log('aaa',commentsData);
             // Map the comments data to extract only the required fields (username and content)
             const formattedComments = commentsData.map(item => ({
-              username: item.username,
+              username: item.User.username,
               content: item.content,
             }));
+            console.log('bbb',formattedComments);
 
-            // Update state or perform any other actions with the formatted comments
-            this.Posts.Comments = formattedComments;
+            this.Posts[index].Comments = formattedComments;
+            console.log('PComments: ', this.Posts[index].Comments);
           } catch (error) {
             console.error('Error fetching Comments', error);
             alert('Comments not Shown');
@@ -244,6 +248,9 @@ import Chart from 'chart.js/auto';
         border-radius: 20px;
     }
     .image-container {
+        background-color: #6c757d;
+        padding: 20px;
+        border-radius: 20px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -255,6 +262,13 @@ import Chart from 'chart.js/auto';
       padding: 20px;
       border-radius: 20px;
       margin-top: 20px;
+      align-items: center;
+    }
+
+    .Comments-container {
+      background-color: #6c757d;
+      padding: 20px;
+      border-radius: 20px;
       align-items: center;
     }
 </style>
