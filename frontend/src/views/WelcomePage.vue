@@ -96,8 +96,9 @@
           <a href="#" class="course-card__link"></a>
         </div>
       </div>
+      <div class="intro-card text-center">Who We Are!</div>
+      <br>
       <div class="course-cards">
-        <div class="intro-card">Who We Are!</div>
         <div class="course-card">
           <img
               class="course-card__logo"
@@ -155,6 +156,17 @@
           <p class="course-card__description">
             a dedicated software engineering student at INSAT with a burning passion for game development. I'm constantly on the lookout for exciting opportunities to expand my knowledge and skills in the world of coding and game design.
           </p>
+          <a href="#" class="course-card__link"></a>
+        </div>
+        <div class="course-card">
+          <img
+              class="course-card__logo"
+              src="./assets/ayoub.png"
+              alt="icon-animation"
+          />
+          <h2 class="course-card__heading">Ayoub Akremi</h2>
+          <p class="course-card__description">
+A software engineering student at INSAT with a predilection for the field of AI. Always eager to learn more and create innovative solutions to everyday problems !</p>
           <a href="#" class="course-card__link"></a>
         </div>
       </div>
