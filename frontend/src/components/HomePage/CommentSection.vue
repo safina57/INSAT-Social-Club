@@ -7,11 +7,10 @@
       <div class="comment" v-for="(comment, index) in comments" :key="index">
         <div class="comment__content">
           <div class="comment__user">
-            <img :src="comment.img" alt="User"/>
+            <img :src="comment.User.image" alt="User"/>
             <p>{{comment.User.username}}</p>
           </div>
           <p class="comment__content__text">{{comment.content}}</p>
-          <p class="comment__content__date">{{comment.createdAt}}</p>
         </div>
       </div>
     </div>

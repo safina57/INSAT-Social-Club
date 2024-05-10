@@ -6,6 +6,8 @@
 parameters:
     upload_directory: '%kernel.project_dir%/avatars'
     upload_directory_post: '%kernel.project_dir%/media'
+    MAIL_USERNAME: '%env(MAIL_USERNAME)%'
+    MAIL_PASSWORD: '%env(MAIL_PASSWORD)%'
 
 services:
     # default configuration for services in *this* file

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+use App\Entity\Comment;
+use App\Entity\React;
 use App\Repository\PostRepository;
 use App\Entity\User;
 use App\Entity\Post;
@@ -47,7 +50,23 @@ class AdminController extends AbstractController
             default => throw new \InvalidArgumentException('Invalid entity class name: ' . $tableName),
         };
         $entity = $repository->find($id);
-
+        if (strtolower($tableName)=='post') {
+            $media = $entity->getMedia();
+            //check how many times the media is used
+            $numOfMediaUsed = $entityManager->getRepository(Post::class)->findBy(['media'=>$media]);
+            $mediaUsedMoreThanOnce = count($numOfMediaUsed) > 1;
+            if ($media && !$mediaUsedMoreThanOnce) {
+                unlink($this->getParameter('upload_directory_post') . '/' . $media);
+            }
+            $comments = $entityManager->getRepository(Comment::class)->findBy(['Post'=>$entity]);
+            foreach($comments as $comment){
+                $entityManager->remove($comment);
+            }
+            $reacts = $entityManager->getRepository(React::class)->findBy(['Post'=>$entity]);
+            foreach($reacts as $react){
+                $entityManager->remove($react);
+            }
+        }
         if (!$entity) {
             return new JsonResponse(['error' => 'Entity not found'], Response::HTTP_NOT_FOUND);
         }
@@ -56,12 +75,35 @@ class AdminController extends AbstractController
         return new JsonResponse(['success' => 'Entity deleted successfully']);
     }
 
-    #[Route('getCommentsByPostId/{postId}', name:'getCommentsByPostId',methods: ['GET'])]
-    public function getCommentsByPostId(string $postId, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('getCommentsByPostId', name:'getCommentsByPostId',methods: ['POST'])]
+    public function getCommentsByPostId(EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        $comments = $entityManager->getRepository('App\Entity\Comment')->findBy(['postId' => $postId]);
-        return $this->json($comments);
+        // Get post ID from request
+        $postId = $request->request->get('id');
+
+        // Fetch post entity by ID
+        $post = $entityManager->getRepository(Post::class)->findOneBy(['id' => $postId]);
+
+        // If post not found, return empty response or appropriate error handling
+        if (!$post) {
+            return new JsonResponse(['error' => 'Post not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        // Fetch comments associated with the post
+        $comments = $post->getComments();
+
+        // Serialize comments to a basic array
+        $commentsData = [];
+        foreach ($comments as $comment) {
+            $commentsData[] = [
+                'id' => $comment->getId(),
+                'content' => $comment->getContent(),
+                'username' => $comment->getUser()->getUsername()
+            ];
+        }
+        return $this->json($commentsData);
     }
+
     #[Route('getValue/{tableName}/{id}', name:'getValue',methods: ['GET'])]
     public function getValue(string $tableName, int $id, EntityManagerInterface $entityManager): JsonResponse
     {

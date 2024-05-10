@@ -8,6 +8,21 @@ api_login:
     path: /api/login
     controller: App\Controller\AuthController::login
 
+api_all_users:
+    path: /messengerApi/all-users
+    controller: App\Controller\MessengerController::getAllUsers
+
+api_send_message:
+    path: /messengerApi/send-message
+    controller: App\Controller\MessengerController::sendMessage
+
+api_fetch_messages:
+    path: /messengerApi/fetch-messages
+    controller: App\Controller\MessengerController::fetchMessages
+
+api_get_current_user:
+    path: /messengerApi/get-current-user
+    controller: App\Controller\MessengerController::getCurrentUserName
 
 admin_api_getAllPosts:
     path: /admin_api/getAll/Post
@@ -92,6 +107,16 @@ api_UploadAvatar:
 api_fetchAvatar:
     path: /api/fetchAvatar
     controller: App\Controller\EditProfileController::fetchAvatar
+
+api_setStatus:
+    path: /api/setStatus
+    controller: App\Controller\EditProfileController::setStatus
+
+api_verifyAdmin:
+    path: /api/verifyAdmin
+    controller: App\Controller\AuthController::verifyAdmin
+
 homePage_deletePost:
     path: /homepage/deletePost
     controller: App\Controller\HomePageController::deletePost
+

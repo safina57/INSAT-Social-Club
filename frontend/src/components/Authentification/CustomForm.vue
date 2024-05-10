@@ -22,9 +22,8 @@
 <script>
 import CustomInput from '@/components/Authentification/CustomInput.vue';
 import axios from 'axios';
-import { mapGetters } from 'vuex';
+import {mapGetters, mapActions} from 'vuex';
 import { mapState } from 'vuex';
-
 export default {
   props: {
     isSignup: {
@@ -43,6 +42,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions(['setEmailVerified']),
     checkPasswordMatch() {
       if (this.isSignup) {
         const password = this.inputs.find(input => input.label === 'Password').value;
@@ -62,9 +62,10 @@ export default {
     clearErrorMessage() {
       this.errorMessage = '';
       this.input = true;
+      this.setEmailVerified(false);
     },
     validatePassword(password) {
-      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@#$%^&*()!-]{8,}$/;
       return regex.test(password);
     },
     calculateAge(birthDate) {

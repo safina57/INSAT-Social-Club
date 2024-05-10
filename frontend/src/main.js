@@ -27,7 +27,8 @@ async function sendDataOnTabClose() {
         if (sessionId) {
             const data = new FormData();
             data.append('sessionId', sessionId);
-            await axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=setOffline`, data);
+            data.append('status', 'Offline')
+            await axios.post(`http://127.0.0.1:8000/api/setStatus`, data);
             console.log('User is offline');
         }
     } catch (error) {

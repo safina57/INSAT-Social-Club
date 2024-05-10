@@ -23,7 +23,7 @@
                         <button @click="showMedia(post.Media)" class="btn btn-outline-secondary">View Media</button>
                     </td>
                     <td>
-                        <button @click="showComments(index)" class="btn btn-outline-secondary">View Comments</button>
+                        <button @click="showComments(index, post.Post_ID)" class="btn btn-outline-secondary">View Comments</button>
                     </td>
                     <td>
                         <button @click="deletePost(post.Post_ID)" class="btn btn-danger">Delete</button>
@@ -39,26 +39,27 @@
     </div>
     <div class="row">
         <div class="col-sm-6">
-            <div v-if="!isNaN(mediaShown) && Posts[mediaShown] && Posts[mediaShown].Media">
-                {{ Posts[mediaShown].Media }}
-            </div>
+          <div class="image-container" v-if="mediaShown">
+            <img :src="mediaShown" alt="Media Image" style="max-width: 100%; height: auto;">
+          </div>
+          <div class="image-container" v-else>
+            <p v-if="viewMedia">No Media to show</p>
+          </div>
+<!--            <div v-if="!isNaN(mediaShown) && Posts[mediaShown] && Posts[mediaShown].Media">-->
+<!--                {{ Posts[mediaShown].Media }}-->
+<!--            </div>-->
         </div>
         <div class="col-sm-6">
-            <div v-if="!isNaN(commentsShown) && Posts[commentsShown] && Posts[commentsShown].Comments">
-                <div v-for="comment in Posts[commentsShown].Comments" :key="comment.comment_ID">
-                    <p>{{ comment.username }}</p>
-                    <p>{{ comment.Content }}</p>
+            <div v-if="!isNaN(commentsShown) && Posts[commentsShown] && Posts[commentsShown].Comments" class="Comments-container">
+                <div v-for="(comment,index) in Posts[commentsShown].Comments" :key="index" >
+                    <p class="image-container">{{ comment.username }}</p>
+                    <p>{{ comment.content }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="image-container" v-if="mediaShown">
-        <img :src="mediaShown" alt="Media Image" style="max-width: 100%; height: auto;">
-    </div>
-    <div class="image-container" v-else>
-        <p v-if="viewMedia">No Media to show</p>
-    </div>
+
 
     <div class="Chart-Container">
       <canvas ref="chartCanvas"></canvas>
@@ -89,8 +90,6 @@ import Chart from 'chart.js/auto';
       },
       methods: {
         deletePost(Post_ID) {
-          let data = new FormData();
-          data.append('Post_ID', Post_ID);
           axios.post(`http://127.0.0.1:8000/admin_api/deleteRow/post/${Post_ID}`)
               .then(response => {
                 if (response.data.success) {
@@ -110,15 +109,19 @@ import Chart from 'chart.js/auto';
         showMedia(media) {
           this.viewMedia = true;
           if (media) {
-            this.mediaShown = "media";
+            console.log (media);
+            this.mediaShown = '../../../../backend/media/'+media;
           } else {
             this.mediaShown = "";
           }
         },
-        showComments(index) {
-          if (this.commentsShown !== index) {
-            this.commentsShown = index;
-          } else {
+        showComments(index, PostId) {
+          if (this.commentsShown!==index) {
+            this.fetchComments(PostId, index);
+            this.commentsShown=index;
+          }
+          else
+          {
             this.commentsShown = NaN;
           }
         },
@@ -130,8 +133,7 @@ import Chart from 'chart.js/auto';
                   return {
                     Username: post.User.username,
                     Content: post.caption,
-                    Media: post.media,
-                    Comments: post.comments,
+                    Media:post.media,
                     Post_ID: post.id
                   };
                 }
@@ -150,6 +152,31 @@ import Chart from 'chart.js/auto';
                 console.error('Error fetching posts:', error);
               })
         },
+
+        async fetchComments(PostID, index) {
+          try {
+            let data = new FormData();
+            data.append('Post_ID', PostID);
+            const response = await axios.post(`http://127.0.0.1:8000/homepage/getComments`, data);
+
+            // Extract data from response
+            const commentsData = response.data;
+            console.log('aaa',commentsData);
+            // Map the comments data to extract only the required fields (username and content)
+            const formattedComments = commentsData.map(item => ({
+              username: item.User.username,
+              content: item.content,
+            }));
+            console.log('bbb',formattedComments);
+
+            this.Posts[index].Comments = formattedComments;
+            console.log('PComments: ', this.Posts[index].Comments);
+          } catch (error) {
+            console.error('Error fetching Comments', error);
+            alert('Comments not Shown');
+          }
+        },
+
         async fetchPostActivity() {
           try {
             const response = await axios.get('http://127.0.0.1:8000/admin_api/postActivity');
@@ -221,6 +248,9 @@ import Chart from 'chart.js/auto';
         border-radius: 20px;
     }
     .image-container {
+        background-color: #6c757d;
+        padding: 20px;
+        border-radius: 20px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -232,6 +262,13 @@ import Chart from 'chart.js/auto';
       padding: 20px;
       border-radius: 20px;
       margin-top: 20px;
+      align-items: center;
+    }
+
+    .Comments-container {
+      background-color: #6c757d;
+      padding: 20px;
+      border-radius: 20px;
       align-items: center;
     }
 </style>

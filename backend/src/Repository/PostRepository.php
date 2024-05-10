@@ -23,7 +23,7 @@ class PostRepository extends ServiceEntityRepository
     public function getTotalPostsPerDay(): array
     {
         $query = $this->createQueryBuilder('p')
-            ->select('p.createdAt AS date')
+            ->select("SUBSTRING(p.createdAt, 1, 10) AS date")
             ->addSelect('COUNT(p.id) AS totalPosts')
             ->groupBy('date')
             ->getQuery();
@@ -38,7 +38,7 @@ class PostRepository extends ServiceEntityRepository
 
         foreach ($results as $result) {
             // Convert the datetime object to a string in 'Y-m-d' format
-            $date = $result['date']->format('Y-m-d');
+            $date = $result['date'];
 
             $formattedData['dates'][] = $date;
             $formattedData['counts'][] = (int) $result['totalPosts'];

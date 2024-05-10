@@ -16,28 +16,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 
-class PostDTO
-{
-    private $post;
-    private $isLiked;
-
-    public function __construct($post, $isLiked)
-    {
-        $this->post = $post;
-        $this->isLiked = $isLiked;
-    }
-
-    public function getPost()
-    {
-        return $this->post;
-    }
-
-    public function getIsLiked()
-    {
-        return $this->isLiked;
-    }
-}
-
 #[Route('/homepage')]
 class HomePageController extends AbstractController
 {
@@ -60,29 +38,30 @@ class HomePageController extends AbstractController
             $posts = $entityManager->getRepository(Post::class)->findBy(['User'=>$user]);
         }
 
-
         $posts = array_reverse($posts);
-        $postsWithIsLiked = [];
         if (!$posts) {
-            throw $this->createNotFoundException(
-                'No posts found'
-            );
+            return $this->json($posts);
         }
-
+        $finaldata =[];
         foreach ($posts as $post) {
-            // Assuming you have a method to check if the user has reacted to the post
             $react = $entityManager->getRepository(React::class)->findOneBy([
                 'User'=>$user,
                 'Post'=>$post
             ]);
+            $data['media']=$post->getMedia();
+            $data['id']=$post->getId();
+            $data['caption']=$post->getCaption();
+            $data['createdAt']=$post->getCreatedAt();
+            $data['User']=$post->getUser();
+            $data['reactCount']=$post->getReactCount();
             $isLiked = $react?true:false;
-            $postDTO = new PostDTO($post, $isLiked);
-            $postsWithIsLiked[] = $postDTO;
+            $data['isLiked']=$isLiked;
+            $finaldata[]=$data;
         }
 
 
 
-        return $this->json($postsWithIsLiked);
+        return $this->json($finaldata);
 
     }
     #[Route('/addPost', name: 'addPost',methods: ['POST'])]
@@ -199,12 +178,7 @@ class HomePageController extends AbstractController
 
         return $this->json([
             'success' => true,
-            'message' => 'Comment added successfully',
-            'comment' => [
-                'id' => $comment->getId(),
-                'caption' => $comment->getCaption(),
-
-            ]
+            'message' => 'Comment added successfully'
         ]);
     }
     #[Route('/getComments', name: 'getComments',methods: ['POST'])]
@@ -215,7 +189,6 @@ class HomePageController extends AbstractController
         $comments = array_reverse($comments);
 
         return $this->json($comments);
-
     }
     #[Route('/getUser', name: 'getUser',methods: ['POST'])]
     public function getUserInfo(ManagerRegistry $doctrine, Request $request): JsonResponse
@@ -226,8 +199,12 @@ class HomePageController extends AbstractController
         $session->setId($sessionId);
         $session->start();
         $id = $session->get('userId');
-        $user = $repository->findOneBy(['id' => $id]);
 
+        if(!$request->get('profileUser_ID') ){
+            $user = $repository->findOneBy(['id' => $id]);
+        }else{
+            $user = $repository->find($request->get('profileUser_ID'));
+        }
 
         $data['email'] = $user->getEmail();
         $data['img'] = $user->getImage();

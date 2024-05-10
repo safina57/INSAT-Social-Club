@@ -11,15 +11,9 @@ import EditProfile from '@/views/EditProfile.vue';
 import Admin from '@/views/Admin.vue';
 import WelcomePage from '@/views/WelcomePage.vue';
 //import UserAccount from '@/views/UserAccount.vue';
-import Test from '@/views/TestTest.vue';
 import axios from 'axios';
 
 const routes = [
-    {
-        path: '/test',
-        name: 'Test',
-        component: Test
-    },
   {
     path: '/login',
     name: 'SigninSignup',
@@ -128,7 +122,7 @@ router.beforeEach((to, from, next) => {
             next('/WelcomePage');
           } else {
             // If the user is logged in, continue with the navigation
-            //setUserOnline();
+            setUserOnline();
             sessionStorage.setItem('sessionId', response.data.sessionID);
             sessionStorage.setItem('userId', response.data.userId);
             if(response.data.isAdmin){
@@ -152,20 +146,21 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
-/*
+
 function setUserOnline() {
   try {
       const sessionId = sessionStorage.getItem('sessionId');
       if (sessionId) {
           const data = new FormData();
           data.append('sessionId', sessionId);
-          axios.post(`http://localhost/php/Social-Media-Clone/src/back/api.php?action=setOnline`, data);
+          data.append('status', 'Online');
+          axios.post(`http://127.0.0.1:8000/api/setStatus`, data);
           console.log('User is online');
       }
   } catch (error) {
       console.error('Error:', error);
   }
 }
-*/
+
 
 export default router;

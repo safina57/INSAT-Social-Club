@@ -14,11 +14,14 @@
           <td colspan="3" class="Note">No users found</td>
         </tr>
         <tr v-for="user in displayedUsers()" :key="user.User_ID">
-          <td v-if="user.Email !== 'insatsocialclubadm1n@gmail.com'">{{ user.Username }}</td>
-          <td v-if="user.Email !== 'insatsocialclubadm1n@gmail.com'">{{ user.Email }}</td>
-          <td v-if="user.Email !== 'insatsocialclubadm1n@gmail.com'">
-            <button @click="deleteUser(user.User_ID)" class="btn btn-danger">Delete</button>
-          </td>
+<!--          <div v-if="user.Email !== 'insatsocialclubadm1n@gmail.com'">-->
+            <td>{{ user.Username }}</td>
+            <td>{{ user.Email }}</td>
+            <td>
+              <button v-if="user.Email !== 'insatsocialclubadm1n@gmail.com'" @click="deleteUser(user.User_ID)" class="btn btn-danger">Delete</button>
+              <button v-else class="btn btn-danger disabled">Can't Delete Admin</button>
+            </td>
+<!--          </div>-->
         </tr>
         <tr v-if="showMoreButton()">
           <td colspan="3">
