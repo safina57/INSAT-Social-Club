@@ -110,7 +110,7 @@ import Chart from 'chart.js/auto';
           this.viewMedia = true;
           if (media) {
             console.log (media);
-            this.mediaShown = '../../../../backend/media/'+media;
+            this.mediaShown = require('../../../../backend/media/'+media);
           } else {
             this.mediaShown = "";
           }
