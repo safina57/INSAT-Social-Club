@@ -60,20 +60,20 @@ export default {
           function transformPost(post) {
             return {
               user: {
-                id:post.post.User.id,
-                name: post.post.User.username,
-                img: post.post.User.image ?  require('../../../backend/avatars/' + post.post.User.image) : require('../../public/img/noProfileImage.jpg'),
+                id:post.User.id,
+                name: post.User.username,
+                img: post.User.image ?  require('../../../backend/avatars/' + post.User.image) : require('../../public/img/noProfileImage.jpg'),
                 alt: 'User Image'
               },
-              content: post.post.caption,
-              img: post.post.media ?require('../../../backend/media/' + post.post.media): "",
+              content: post.caption,
+              img: post.media ?require('../../../backend/media/' + post.media): "",
               alt: 'Post Image',
               commentsShown: false,
               newCommentContent: '',
               isLiked:post.isLiked,
-              Post_ID : post.post.id,
-              React_Count : post.post.reactCount,
-              date: post.post.createdAt
+              Post_ID : post.id,
+              React_Count : post.reactCount,
+              date: post.createdAt
 
             };
           }
