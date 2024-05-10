@@ -2,7 +2,7 @@
   <div class="chat-container">
     <div class="messages-container" ref="messagesContainer">
       <div v-for="(message, index) in messages" :key="index" :class="{ 'sender-message': isSender(message.fromName), 'receiver-message': !isSender(message.fromName) }" :style="{ 'background-color': isSender(message.fromName) ? '#007bff' : '#f0f0f0' }" class="message">
-        <div v-if="!isConsecutive(message.fromName, index)" class="message-sender">{{ message.fromName }} <span class="message-time">{{ formatMessageTime(message.date) }}</span></div>
+        <div v-if="!isConsecutive(message.fromName, index)" class="message-sender">{{ message.fromName }} <span class="message-time">{{ formatMessageTime(message.createdAt) }}</span></div>
         <div class="message-content">{{ message.message }}</div>
       </div>
     </div>
