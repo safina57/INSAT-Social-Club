@@ -67,7 +67,6 @@ class HomePageController extends AbstractController
         }
 
         foreach ($posts as $post) {
-            // Assuming you have a method to check if the user has reacted to the post
             $react = $entityManager->getRepository(React::class)->findOneBy([
                 'User'=>$user,
                 'Post'=>$post
