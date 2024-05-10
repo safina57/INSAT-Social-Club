@@ -16,28 +16,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 
-class PostDTO
-{
-    private $post;
-    private $isLiked;
-
-    public function __construct($post, $isLiked)
-    {
-        $this->post = $post;
-        $this->isLiked = $isLiked;
-    }
-
-    public function getPost()
-    {
-        return $this->post;
-    }
-
-    public function getIsLiked()
-    {
-        return $this->isLiked;
-    }
-}
-
 #[Route('/homepage')]
 class HomePageController extends AbstractController
 {
@@ -61,25 +39,29 @@ class HomePageController extends AbstractController
         }
 
         $posts = array_reverse($posts);
-        $postsWithIsLiked = [];
         if (!$posts) {
             return $this->json($posts);
         }
-
+        $finaldata =[];
         foreach ($posts as $post) {
-            // Assuming you have a method to check if the user has reacted to the post
             $react = $entityManager->getRepository(React::class)->findOneBy([
                 'User'=>$user,
                 'Post'=>$post
             ]);
+            $data['media']=$post->getMedia();
+            $data['id']=$post->getId();
+            $data['caption']=$post->getCaption();
+            $data['createdAt']=$post->getCreatedAt();
+            $data['User']=$post->getUser();
+            $data['reactCount']=$post->getReactCount();
             $isLiked = $react?true:false;
-            $postDTO = new PostDTO($post, $isLiked);
-            $postsWithIsLiked[] = $postDTO;
+            $data['isLiked']=$isLiked;
+            $finaldata[]=$data;
         }
 
 
 
-        return $this->json($postsWithIsLiked);
+        return $this->json($finaldata);
 
     }
     #[Route('/addPost', name: 'addPost',methods: ['POST'])]

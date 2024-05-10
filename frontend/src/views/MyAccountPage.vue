@@ -16,7 +16,7 @@
     <PostSection  :Posts="visiblePosts" @postAdded="handlePostAdded()" @postDeleted="handlePostDeleted()" /> <!-- Fixed The Visible Posts problem -->
     <p v-if="visiblePostCount - Posts.length > 0" class="Note">No more posts to load</p>
     <button v-if="Posts.length > 8" class="btn btn-info"  @click="loadMorePosts()">Load More</button>
-    <button class="btn btn-info" @click="editProfile()" style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
+    <button v-if="routePath==='/myAccount'"  class="btn btn-info" @click="editProfile()" style="position: fixed; bottom: 20px; right: 20px; z-index: 999;">
         Edit Profile
     </button>
 </template>
@@ -34,6 +34,7 @@ export default {
             user: {},
             Posts: [],
             visiblePostCount: 8,
+            routePath: '',
         };
     },
     components: {
@@ -59,20 +60,20 @@ export default {
           function transformPost(post) {
             return {
               user: {
-                id:post.post.User.id,
-                name: post.post.User.username,
-                img: post.post.User.image ?  require('../../../backend/avatars/' + post.post.User.image) : require('../../public/img/noProfileImage.jpg'),
+                id:post.User.id,
+                name: post.User.username,
+                img: post.User.image ?  require('../../../backend/avatars/' + post.User.image) : require('../../public/img/noProfileImage.jpg'),
                 alt: 'User Image'
               },
-              content: post.post.caption,
-              img: post.post.media ?require('../../../backend/media/' + post.post.media): "",
+              content: post.caption,
+              img: post.media ?require('../../../backend/media/' + post.media): "",
               alt: 'Post Image',
               commentsShown: false,
               newCommentContent: '',
               isLiked:post.isLiked,
-              Post_ID : post.post.id,
-              React_Count : post.post.reactCount,
-              date: post.post.createdAt
+              Post_ID : post.id,
+              React_Count : post.reactCount,
+              date: post.createdAt
 
             };
           }
@@ -156,6 +157,7 @@ export default {
         // Fetch initial set of posts when the component is created
         this.fetchPosts();
         this.fetchUserInfo();
+        this.routePath = window.location.pathname;
     },
 };
 </script>
